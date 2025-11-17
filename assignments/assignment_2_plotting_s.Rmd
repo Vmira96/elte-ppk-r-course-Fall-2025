@@ -118,5 +118,33 @@ Notes:
 -   The point size is 2, . The theme is set to light.
 
 ```{r}
+library(tidytuesdayR)
+library(tidyverse)
+library(scales)
 
+# Loading data
+tuesdata <- tt_load('2019-11-05')
+commute_data <- tuesdata$commute
+
+# Summarization and pivot_wider
+commute_summary <- commute_data %>%
+  filter(mode %in% c("Bike", "Walk")) %>%  # csak a két mód
+  group_by(state, mode) %>%
+  summarise(n_total = sum(n, na.rm = TRUE), .groups = "drop") %>%
+  pivot_wider(names_from = mode, values_from = n_total)
+
+# Checking the column names
+colnames(commute_summary)
+
+# ggplot and geom_point
+ggplot(commute_summary, aes(x = Bike, y = Walk)) +
+  geom_point(size = 2) +
+  scale_x_log10(labels = scales::comma_format()) +
+  scale_y_log10(labels = scales::comma_format()) +
+  theme_light() +
+  labs(
+    x = "Bike Commutes",
+    y = "Walk Commutes",
+    title = "Commuting to Work by Bike or on Foot by State (TidyTuesday 2019-11-05)"
+  )
 ```
