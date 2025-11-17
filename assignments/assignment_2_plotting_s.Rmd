@@ -76,7 +76,35 @@ Notes:
 -   The line size is 1.2, the colors are from the brewer "Dark2" palette. The theme is set to minimal.
 
 ```{r}
+library(tidytuesdayR)
+library(tidyverse)
+library(scales)
+library(RColorBrewer)
 
+# Download the 2019-02-19 weekly data
+tuesdata <- tt_load('2019-02-19')
+
+# Phd_by_field data
+phd_data <- tuesdata$phd_by_field
+
+# Summarize by broad_field 
+phd_summary <- phd_data %>%
+  group_by(year, broad_field) %>%
+  summarise(phd_count = sum(n_phds, na.rm = TRUE), .groups = "drop")
+
+# Preparation of the geom line
+ggplot(phd_summary, aes(x = year, y = phd_count, color = broad_field)) +
+  geom_line(linewidth = 1.2) +
+  scale_x_continuous(breaks = scales::pretty_breaks()) +
+  scale_y_continuous(labels = scales::comma_format()) +
+  scale_color_brewer(palette = "Dark2") +
+  theme_minimal() +
+  labs(
+    x = "Year",
+    y = "Number of PhDs",
+    color = "Broad Field",
+    title = "PhDs Awarded by Broad Field (TidyTuesday 2019-02-19)"
+  )
 ```
 
 ## Task 3: Commute in the US
