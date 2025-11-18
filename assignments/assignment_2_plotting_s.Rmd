@@ -128,7 +128,7 @@ commute_data <- tuesdata$commute
 
 # Summarization and pivot_wider
 commute_summary <- commute_data %>%
-  filter(mode %in% c("Bike", "Walk")) %>%  # csak a két mód
+  filter(mode %in% c("Bike", "Walk")) %>%  
   group_by(state, mode) %>%
   summarise(n_total = sum(n, na.rm = TRUE), .groups = "drop") %>%
   pivot_wider(names_from = mode, values_from = n_total)
