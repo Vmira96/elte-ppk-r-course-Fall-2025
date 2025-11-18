@@ -59,9 +59,18 @@ In your discussion of the findings, briefly interpret the results of the above a
 Read the dataset used in this assignment. Pay attention to the extension of the datafile.
 
 ```{r}
+library(tidyverse)
+library(broom)      
+library(car)         
+library(lmtest)      
 
+knitr::opts_chunk$set(echo = TRUE)
+data <- read_delim("data/assignment_3_dataset.xlsx")
+``` 
+
+```{r}
+list.files("data")
 ```
-
 ## Data and model diagnostics 
 ### Data diagnostics
 #### Descriptives of the variables
