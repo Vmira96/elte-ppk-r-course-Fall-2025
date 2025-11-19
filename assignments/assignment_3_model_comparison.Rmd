@@ -424,8 +424,54 @@ The majority of predictors show no concerning multicollinearity. However, cortis
 If based on the assumption tests you decide to drop a predictor variable you should do that here. Create your updated model.
 
 ```{r}
+#### Updated model (dropping cortisol_saliva)
 
+model_updated <- lm(
+  pain ~ age + sex + STAI_trait + pain_cat + cortisol_serum +
+    mindfulness + weight + IQ + household_income,
+  data = data
+)
+summary(model_updated)
 ```
+Updated Model Based on Diagnostics
+
+Based on the model diagnostics, a decision was made to drop cortisol_saliva from the complex model in order to reduce multicollinearity. The updated model now includes: age, sex, STAI_trait, pain_cat, cortisol_serum, mindfulness, weight, IQ, and household_income.
+
+Results of the updated model:
+
+Residuals:
+The residuals remain largely similar to the previous model, with a single extreme outlier (maximum ~43) persisting, likely corresponding to observation 142.
+
+Coefficients:
+                   Estimate Std. Error t value Pr(>|t|)  
+(Intercept)      -4.096e+00  5.849e+00  -0.700   0.4848  
+age              -2.063e-02  7.127e-02  -0.289   0.7726  
+sexfemale         2.016e-01  6.558e-01   0.307   0.7590  
+STAI_trait        1.659e-02  8.267e-02   0.201   0.8413  
+pain_cat          7.095e-02  8.690e-02   0.816   0.4155  
+cortisol_serum    8.133e-01  3.804e-01   2.138   0.0341 *
+mindfulness      -4.965e-02  3.940e-01  -0.126   0.8999  
+weight            1.470e-02  3.165e-02   0.464   0.6430  
+IQ                2.407e-02  1.941e-02   1.240   0.2169  
+household_income -7.495e-07  1.336e-05  -0.056   0.9553
+
+Model fit:
+
+Residual standard error: 3.814
+
+Multiple R-squared: 0.0859
+
+Adjusted R-squared: 0.0310
+
+F-statistic: 1.565 on 9 and 150 DF, p = 0.1305
+
+Interpretation:
+
+The updated model shows that cortisol_serum is now the only significant predictor of pain (p = 0.0341).
+
+The overall explained variance remains low (adjusted R² ~3%), suggesting that the model captures only a small proportion of the variability in pain.
+
+The extreme outlier (likely observation 142) continues to influence the model and may affect residual distribution and coefficient estimates.
 
 #### Checking outliers of the updated model
 
