@@ -589,8 +589,26 @@ Handling the outlier (e.g., removal or robust regression) would likely make the 
 Homoscedasticty assumption (homogeneity of variance)
 
 ```{r}
+#### Homoscedasticity check for updated model
 
+library(lmtest)
+
+# Studentized Breusch-Pagan test
+bptest(model_updated, studentize = TRUE)
 ```
+Checking Homoscedasticity Assumption (Updated Model)
+
+Homoscedasticity, or the assumption of equal variance of residuals across all levels of predictors, was assessed for the updated model using the Studentized Breusch-Pagan test and a Residuals vs Fitted plot.
+
+Breusch-Pagan test: BP = 4.3203, df = 9, p = 0.8891. Since p > 0.05, the null hypothesis of constant variance is not rejected, indicating that homoscedasticity holds.
+
+Residuals vs Fitted plot: The residuals are randomly scattered around the horizontal line at zero, with no apparent funnel or curved pattern, further confirming equal variance.
+
+Interpretation:
+
+The residuals exhibit homogeneous variance, satisfying the homoscedasticity assumption.
+
+Despite the presence of the extreme outlier (observation 142), the overall variance of residuals is consistent across predicted values.
 
 Multicollinearity assumption
 
