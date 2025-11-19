@@ -387,8 +387,37 @@ https://statisticalhorizons.com/multicollinearity
 http://blog.minitab.com/blog/understanding-statistics/handling-multicollinearity-in-regression-analysis
 
 ```{r}
+#### Checking assumptions: Multicollinearity
 
+library(car)
+
+# Calculate VIF for each predictor
+vif_values <- vif(model_complex)
+vif_values
+
+# Optional: highlight predictors with VIF > 5
+vif_values[vif_values > 5]
 ```
+Checking Multicollinearity
+
+Multicollinearity among predictors was assessed using the Variance Inflation Factor (VIF). A VIF value indicates how much the variance of a regression coefficient is inflated due to correlation with other predictors.
+
+General interpretation of VIF values:
+
+VIF < 3 → negligible multicollinearity
+
+VIF 3–5 → moderate correlation
+
+VIF > 5 → potentially problematic multicollinearity
+
+Results for the complex model:
+
+Most predictors have VIF values below 3: age (1.55), sex (1.18), STAI_trait (2.20), pain_cat (1.98), mindfulness (1.62), weight (1.08), IQ (1.08), household_income (1.13).
+
+Two predictors exceed the recommended threshold: cortisol_serum (6.20) and cortisol_saliva (6.80).
+
+Interpretation:
+The majority of predictors show no concerning multicollinearity. However, cortisol_serum and cortisol_saliva exhibit high VIF values, indicating that they are strongly correlated with other variables in the model. This may lead to unstable coefficient estimates and inflated standard errors for these predictors.
 
 ### Making decision based on model diagnostics
 
