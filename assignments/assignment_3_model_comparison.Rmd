@@ -649,8 +649,60 @@ The updated model is stable and suitable for inference with respect to multicoll
 Create the simple model and get the results of the model that needs to be reported based on the What to report section.
 
 ```{r}
+# Simple model
+model_simple <- lm(
+  pain ~ age + sex + STAI_trait + pain_cat + mindfulness,
+  data = data
+)
 
+summary(model_simple)
+
+# AIC values
+AIC(model_simple)
+
+library(lm.beta)
+
+# Standardized coefficients for simple model
+model_simple_beta <- lm.beta(model_simple)
+summary(model_simple_beta)
+
+# Confidence intervals
+confint(model_simple)
 ```
+Simple Model Results
+
+A simple linear regression model was fitted to predict pain from age, sex, STAI_trait, pain catastrophizing, and mindfulness.
+
+Model fit statistics:
+
+Residual standard error = 3.84 (df = 154)
+
+Multiple R² = 0.0488
+
+Adjusted R² = 0.0179
+
+F(5, 154) = 1.58, p = 0.1688
+
+These results indicate that the simple model explains only a small proportion of variance in pain, and the overall model is not statistically significant.
+
+Coefficients:
+             Estimate Standardized Std. Error t value Pr(>|t|)
+(Intercept)  2.460681           NA   4.970069   0.495    0.621
+age         -0.071704    -0.093336   0.067911  -1.056    0.293
+sexfemale    0.217665     0.028142   0.646739   0.337    0.737
+STAI_trait   0.076474     0.101653   0.077635   0.985    0.326
+pain_cat     0.086968     0.107240   0.086689   1.003    0.317
+mindfulness -0.038699    -0.009759   0.382391  -0.101    0.920
+
+Interpretation:
+
+None of the predictors reach statistical significance (p > 0.05).
+
+Confidence intervals for all predictors include zero, suggesting no reliable effect in the sample.
+
+Standardized coefficients indicate the largest, but still very small, effects are for pain catastrophizing (Beta = 0.107) and STAI_trait (Beta = 0.102).
+
+Overall, the simple model has limited explanatory power for predicting pain.
 
 Create the more complex model based on the results of the model diagnostics. Also, get the results that needs to be reported based on the What to report section.
 
