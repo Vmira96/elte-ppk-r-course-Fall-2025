@@ -307,8 +307,49 @@ Overall, these findings indicate that caution is needed when interpreting p-valu
 Check the linearity assumption.
 
 ```{r}
+library(car)
 
+#### Checking assumptions: Linearity
+
+# Residuals vs Fitted plot
+plot(model_complex$fitted.values, residuals(model_complex),
+     xlab = "Fitted values", ylab = "Residuals",
+     main = "Residuals vs Fitted Values")
+abline(h = 0, col = "red")
+
+# Component + Residual plots
+crPlots(model_complex)  # from the car package
 ```
+Checking Linearity Assumption
+
+The linearity assumption of the regression model was assessed using the Residuals vs Fitted Values plot and Component + Residual plots for each predictor.
+
+Residuals vs Fitted plot: Most residuals are randomly scattered around the horizontal line, suggesting that the overall linearity assumption is reasonably met. However, there is one extreme residual above 40, indicating a strongly outlying observation (likely observation 142 identified previously).
+
+Component + Residual observations by predictor:
+
+Age: one outlier around 40 years.
+
+Sex: female category has one high outlier above 40; male values remain close to 7.
+
+STAI_trait: one extreme value around 44.
+
+Pain_cat: one outlier around 30.
+
+Cortisol_serum: one outlier around 6.
+
+Cortisol_saliva: one outlier slightly above 6.
+
+Mindfulness: one outlier around 3.
+
+Weight: one outlier around 74.
+
+IQ: one outlier slightly below 120.
+
+Household_income: one outlier in the 7000–8000 range.
+
+Interpretation:
+Overall, the linearity assumption is largely satisfied, as the majority of residuals are randomly distributed around the zero line. However, the presence of multiple extreme values suggests that certain observations could disproportionately influence the regression estimates. These outliers should be carefully examined and may require consideration for model refinement, such as robust regression, transformation of variables, or exclusion if justified.
 
 Check the homoscedasticty assumption (homogeneity of variance).
 
