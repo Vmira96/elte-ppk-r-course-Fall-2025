@@ -274,8 +274,35 @@ Overall, observation 142 appears to be the most influential point, both in terms
 Check the normality assumption.
 
 ```{r}
+#### Checking assumptions: Normality of residuals
 
+# Extract residuals
+residuals_model <- residuals(model_complex)
+
+# 1. Histogram
+hist(residuals_model, breaks = 20, main = "Histogram of Residuals", xlab = "Residuals")
+
+# 2. QQ plot
+qqnorm(residuals_model, main = "QQ Plot of Residuals")
+qqline(residuals_model, col = "red")
+
+# 3. Shapiro-Wilk test
+shapiro_test <- shapiro.test(residuals_model)
+shapiro_test
 ```
+Checking Normality of Residuals
+
+The normality assumption of the residuals was assessed using a histogram, a QQ plot, and the Shapiro-Wilk test.
+
+Histogram: The residuals show a distribution that deviates from the typical bell-shaped curve, suggesting non-normality.
+
+QQ Plot: The residuals deviate substantially from the reference line, confirming that they are not normally distributed.
+
+Shapiro-Wilk Test: W = 0.32303, p < 2.2e-16. The extremely low p-value indicates that the residuals significantly deviate from a normal distribution.
+
+Interpretation:
+The results suggest that the residuals of the complex model do not meet the normality assumption. This may be influenced by extreme outliers (e.g., observation 142 identified earlier).
+Overall, these findings indicate that caution is needed when interpreting p-values and confidence intervals from this model, as the non-normality of residuals can affect their reliability.
 
 Check the linearity assumption.
 
