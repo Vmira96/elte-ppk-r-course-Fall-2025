@@ -196,8 +196,29 @@ This value was corrected by recoding “woman” to “female”, and afterward 
 In order to test the more complex model for outliers and to test the assumptions first build the model.
 
 ```{r}
-
+# Complex model
+model_complex <- lm(
+  pain ~ age + sex + STAI_trait + pain_cat + cortisol_serum +
+    cortisol_saliva + mindfulness + weight + IQ + household_income,
+  data = data
+)
+summary(model_complex)
 ```
+# Model Summary
+
+A multiple linear regression was conducted to examine the relationship between pain and a set of predictors, including age, sex, STAI_trait, pain_cat, cortisol_serum, cortisol_saliva, mindfulness, weight, IQ, and household_income.
+The model summary indicates the following:
+
+Residuals range from -3.877 to 43.058, with a median of -0.213, suggesting that most residuals are close to zero but there are some large deviations, indicating potential outliers.
+
+Multiple R-squared = 0.097 and Adjusted R-squared = 0.037, which means the model explains approximately 9.7% of the variance in pain, and the adjusted value accounting for the number of predictors is only 3.7%. This indicates a low explanatory power.
+
+F-statistic = 1.604 (p = 0.111) suggests that the model, as a whole, is not statistically significant, meaning the predictors collectively do not significantly explain variability in pain.
+
+Individual predictors all have p-values greater than 0.05, indicating that none of the variables significantly predict pain in this model. The largest t-values are observed for cortisol_saliva (t = 1.366) and IQ (t = 1.347), though these are still not significant.
+
+Interpretation:
+The current model shows limited explanatory power, and the presence of large residuals suggests that there may be influential points or outliers affecting the estimates. Therefore, the next step is to perform outlier diagnostics, including Cook’s distance, leverage, and standardized residuals, to identify and potentially address any data points that have a disproportionate influence on the model.
 
 #### Checking for influential outliers
 
