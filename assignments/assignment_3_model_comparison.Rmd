@@ -354,8 +354,29 @@ Overall, the linearity assumption is largely satisfied, as the majority of resid
 Check the homoscedasticty assumption (homogeneity of variance).
 
 ```{r}
+#### Checking assumptions: Homoscedasticity
 
+# 1. Residuals vs Fitted plot
+plot(model_complex$fitted.values, residuals(model_complex),
+     xlab = "Fitted values", ylab = "Residuals",
+     main = "Residuals vs Fitted Values for Homoscedasticity")
+abline(h = 0, col = "red")
+
+# 2. Breusch-Pagan test
+# install.packages("lmtest")  # ha még nincs telepítve
+library(lmtest)
+bptest(model_complex)
 ```
+Checking Homoscedasticity (Homogeneity of Variance)
+
+The homoscedasticity assumption, which requires that the residuals have constant variance across all levels of the fitted values, was assessed using a Residuals vs Fitted Values plot and the studentized Breusch-Pagan test.
+
+Residuals vs Fitted plot: Most residuals are generally scattered evenly around the horizontal zero line, indicating constant variance. There is one outlying residual, but the overall pattern does not show a systematic funnel shape.
+
+Breusch-Pagan test: BP = 4.9895, df = 10, p = 0.8919. The high p-value indicates no significant heteroscedasticity, confirming that the variance of residuals is approximately constant.
+
+Interpretation:
+The homoscedasticity assumption is satisfied for the complex model. This suggests that the standard errors, t-values, and confidence intervals are reliable. Although there is a single outlying point (likely observation 142 identified in previous diagnostic checks), it does not indicate a violation of the homoscedasticity assumption for the dataset overall.
 
 Check the multicollinearity assumption.
 
