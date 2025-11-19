@@ -782,6 +782,39 @@ Regression equation (unstandardized coefficients):
 Compare the two models.
 
 ```{r}
+AIC(model_simple)
+AIC(model_updated)
 
+anova(model_simple, model_updated)
 ```
+Model Comparison: Simple vs. Complex (Updated) Model
 
+To evaluate whether the more complex model provides a better fit to the data than the simpler model, we compared the models in terms of variance explained, Akaike Information Criterion (AIC), and a likelihood ratio (F) test.
+
+Model fit statistics:
+
+Model	Adjusted R²	AIC	Residual df	Residual Sum of Squares (RSS)
+Simple	0.0179	898.22	154	2270.5
+Complex	0.0310	894.12	150	2182.0
+
+The complex model explains slightly more variance in pain (adj. R² = 0.031) than the simple model (adj. R² = 0.018).
+
+The AIC is lower for the complex model (894.12 vs. 898.22), indicating a marginally better fit.
+
+Nested model comparison (F-test):
+
+F(4, 150) = 1.5203, p = 0.1991
+
+Since p > 0.05, the difference between models is not statistically significant, meaning the complex model does not provide a significantly better overall fit than the simple model.
+
+Interpretation:
+
+While the complex model includes additional predictors such as cortisol_serum, which has a statistically significant effect on pain (p = 0.034), the overall improvement in model fit is modest.
+
+The simple model remains largely comparable in explanatory power, and the added complexity does not significantly enhance prediction of pain in this sample.
+
+Conclusion:
+
+The complex model may be preferred if interest lies in individual predictors like cortisol_serum.
+
+However, for overall model fit and parsimony, the simpler model performs similarly to the complex model.
