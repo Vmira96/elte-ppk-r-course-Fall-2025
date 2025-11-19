@@ -476,8 +476,50 @@ The extreme outlier (likely observation 142) continues to influence the model an
 #### Checking outliers of the updated model
 
 ```{r}
+#### Checking outliers for updated model
 
+# Standardized residuals
+std_resid <- rstandard(model_updated)
+
+# Cook's distance
+cooks_d <- cooks.distance(model_updated)
+
+# Leverage
+leverage_vals <- hatvalues(model_updated)
+
+# Thresholds
+n <- nrow(data)
+p <- length(coef(model_updated)) - 1  # exclude intercept
+cooksd_threshold <- 4/n
+leverage_threshold <- 2*(p+1)/n
+
+# Identify extreme points
+extreme_resid <- which(abs(std_resid) > 3)
+influential_cooks <- which(cooks_d > cooksd_threshold)
+high_leverage <- which(leverage_vals > leverage_threshold)
+
+# Print results
+cat("Observations with extreme standardized residuals:", extreme_resid, "\n")
+cat("Observations with high Cook's distance:", influential_cooks, "\n")
+cat("Observations with high leverage:", high_leverage, "\n")
 ```
+Checking Outliers in the Updated Model
+
+Outliers and influential points in the updated model were examined using standardized residuals, Cook's distance, and leverage values.
+
+Extreme standardized residuals: Observation 142 has a residual exceeding ±3, indicating a strong deviation from the model's predicted value.
+
+Cook's distance: Observation 142 also shows a high Cook's distance, meaning it has a substantial influence on the regression coefficients.
+
+Leverage values: Observations 32, 110, 126, and 160 have high leverage, indicating unusual combinations of predictor values that may affect the model fit.
+
+Interpretation:
+
+Observation 142 is a clear outlier and highly influential, consistent with previous diagnostics, and could distort coefficient estimates and residual patterns.
+
+The high-leverage points (32, 110, 126, 160) are not extreme in residuals but may still impact the model due to their predictor values.
+
+Overall, the majority of data points fit the model reasonably well, but attention should be paid to these identified points.
 
 #### Checking assumptions of the updated model
 
