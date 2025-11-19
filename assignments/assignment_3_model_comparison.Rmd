@@ -225,8 +225,49 @@ The current model shows limited explanatory power, and the presence of large res
 Check for outlier values in the model.
 
 ```{r}
+# Cook's distance
+cooksd <- cooks.distance(model_complex)
+plot(cooksd, type = "h", main = "Cook's Distance", ylab = "Cook's distance")
+abline(h = 4/(nrow(data)-length(model_complex$coefficients)-2), col = "red") 
+# Points above the red line are considered influential
 
+# Leverage (hat values)
+lev <- hatvalues(model_complex)
+plot(lev, type = "h", main = "Leverage Values", ylab = "Leverage")
+abline(h = 2*length(model_complex$coefficients)/nrow(data), col = "red")
+# Points above the red line have high leverage
+
+# Standardized residuals
+std_res <- rstandard(model_complex)
+plot(std_res, type = "h", main = "Standardized Residuals", ylab = "Standardized Residuals")
+abline(h = c(-3, 3), col = "red")
+
+# Thresholds
+cooks_threshold <- 4/(nrow(data) - length(model_complex$coefficients) - 2)
+leverage_threshold <- 2*length(model_complex$coefficients)/nrow(data)
+residual_threshold <- 3  # standardized residuals beyond ±3
+
+# Points exceeding thresholds
+influential_cooks <- which(cooks.distance(model_complex) > cooks_threshold)
+high_leverage <- which(hatvalues(model_complex) > leverage_threshold)
+extreme_resid <- which(abs(rstandard(model_complex)) > residual_threshold)
+
+# Print results
+cat("Observations with high Cook's distance:", influential_cooks, "\n")
+cat("Observations with high leverage:", high_leverage, "\n")
+cat("Observations with extreme standardized residuals:", extreme_resid, "\n")
 ```
+Identification of Influential Outliers
+
+The model was further examined to identify observations that might exert disproportionate influence on the regression estimates. Three diagnostics were considered: Cook’s distance, leverage, and standardized residuals.
+
+Cook’s distance: Observation 142 exceeds the recommended threshold, indicating it has a strong influence on the estimated coefficients.
+
+Leverage values: Observations 110 and 126 have unusually high leverage, meaning their predictor values are extreme relative to the rest of the data.
+
+Standardized residuals: Observation 142 has a residual beyond ±3, indicating a poor fit with the model predictions.
+
+Overall, observation 142 appears to be the most influential point, both in terms of Cook’s distance and standardized residuals. Observations 110 and 126 also have high leverage, suggesting they could affect the model if not addressed. These points should be carefully examined to determine whether they represent data entry errors, extreme but valid values, or cases warranting model adjustment (e.g., exclusion or transformation) in a refined analysis.
 
 #### Checking assumptions
 
