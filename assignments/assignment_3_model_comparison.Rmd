@@ -62,15 +62,13 @@ Read the dataset used in this assignment. Pay attention to the extension of the 
 library(tidyverse)
 library(broom)      
 library(car)         
-library(lmtest)      
+library(lmtest)   
+library(readxl)
 
 knitr::opts_chunk$set(echo = TRUE)
-data <- read_delim("data/assignment_3_dataset.xlsx")
+data <- read_excel("data/assignment_3_dataset.xlsx")
 ``` 
 
-```{r}
-list.files("data")
-```
 ## Data and model diagnostics 
 ### Data diagnostics
 #### Descriptives of the variables
@@ -78,16 +76,119 @@ list.files("data")
 Run an exploratory data analysis (EDA) to investigate the dataset.
 
 ```{r}
+# Descriptives of the variables
+summary(data)
+glimpse(data)
 
+# Distribution of main variables
+data %>%
+  select(pain, age, STAI_trait, pain_cat, cortisol_serum, cortisol_saliva,
+         mindfulness, weight, IQ, household_income) %>%
+  gather(key = "variable", value = "value") %>%
+  ggplot(aes(x = value)) +
+  geom_histogram(bins = 30) +
+  facet_wrap(~ variable, scales = "free") +
+  theme_minimal()
+
+# Distribution of categorical variables
+table(data$sex)
+
+ggplot(data, aes(x = sex)) +
+  geom_bar() +
+  theme_minimal()
+
+#Correlation matrix
+numeric_vars <- data %>% 
+  select_if(is.numeric)
+
+cor(numeric_vars)
+
+library(corrplot)
+corrplot(cor(numeric_vars), method = "color")
+
+# Correlations between main variables
+## Pain vs age
+ggplot(data, aes(x = age, y = pain)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_minimal()
+
+## Pain vs sex
+ggplot(data, aes(x = sex, y = pain)) +
+  geom_boxplot() +
+  theme_minimal()
 ```
+
+#Descriptives of the variables
+
+The dataset contains data from 160 participants. There are no missing values in any variable.
+
+Pain has a mean of ~5.19 (SD ~2), with a minimum of 1 and a maximum of 50, suggesting that a few participants reported unusually high pain values. Most values fall between 4 and 6.
+
+Sex is approximately evenly distributed (male n = 76, female n = 84).
+
+Age ranges from 24 to 53, with an average of 40.7 years, indicating a mid-adult sample.
+
+The psychological variables show the following tendencies:
+
+STAI_trait: mean ≈ 40, moderate anxiety levels.
+
+pain_cat: mean ≈ 29.9, moderate pain catastrophizing.
+
+mindfulness: mean ≈ 3.2 on a 1–6 scale, indicating a mid-range mindfulness tendency.
+
+Biological stress markers:
+
+cortisol_serum and cortisol_saliva show moderate ranges and are very strongly correlated (r ≈ .91), as expected from two measures of the same hormone.
+
+Socioeconomic variables:
+
+household_income ranges widely (5,548 – 139,268), showing large variability.
+
+Weight ranges from 33.8 kg to 97.1 kg. IQ ranges from 52 to 144, with a mean around 100, consistent with a general population sample.
+
+Distributions
+
+Histograms show that most variables are approximately normally distributed, with slight skewness in:
+
+household_income (right-skewed)
+
+pain (a few extreme high values)
+
+cortisol measures (slightly right-skewed)
+
+Correlations
+
+Key relationships:
+
+Serum and saliva cortisol have an extremely high correlation (r = .91).
+
+STAI_trait, pain_cat, and both cortisol measures form a cluster of positively correlated variables.
+
+Mindfulness correlates negatively with psychological distress variables (STAI_trait: r ≈ –.48, pain_cat: r ≈ –.50).
+
+Pain shows small-to-moderate positive correlations with psychological variables and cortisol.
+
+Age is weakly negatively correlated with pain.
+
+Pain relationships
+
+Pain ~ age: The scatterplot indicates no strong linear relationship, with a slight trend toward lower pain in older participants.
+
+Pain ~ sex: Boxplots show very similar pain levels in males and females.
 
 #### Correct coding errors
 
 If you find values in the dataset during the EDA, that are not correct based on the provided descriptions of the variables of the dataset please correct them here.
 
 ```{r}
-
+data <- data %>%
+  mutate(sex = ifelse(sex == "woman", "female", sex))
+data$sex <- factor(data$sex, levels = c("male", "female"))
 ```
+During the EDA, one miscoded value was found in the variable sex.
+The category “woman” appeared once, even though the dataset documentation indicates that the variable should contain only “male” and “female”.
+This value was corrected by recoding “woman” to “female”, and afterward the variable was refactored to ensure correct level order.
 
 ### Model diagnostics
 #### Build the more complex model
