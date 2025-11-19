@@ -706,9 +706,78 @@ Overall, the simple model has limited explanatory power for predicting pain.
 
 Create the more complex model based on the results of the model diagnostics. Also, get the results that needs to be reported based on the What to report section.
 
-```{r}
+\text{pain} = 2.461 + (-0.0717 \cdot \text{age}) + 0.218 \cdot \text{sexfemale} + 0.0765 \cdot \text{STAI_trait} + 0.0870 \cdot \text{pain_cat} + (-0.0387 \cdot \text{mindfulness})
 
+```{r}
+# Complex (updated) model
+model_updated <- lm(
+  pain ~ age + sex + STAI_trait + pain_cat + cortisol_serum +
+         mindfulness + weight + IQ + household_income,
+  data = data
+)
+
+summary(model_updated)
+
+# 95% confidence intervals
+confint(model_updated)
+
+# Standardized coefficients using scale()
+model_updated_std <- lm(
+  scale(pain) ~ scale(age) + scale(as.numeric(sex)) + scale(STAI_trait) +
+                 scale(pain_cat) + scale(cortisol_serum) + scale(mindfulness) +
+                 scale(weight) + scale(IQ) + scale(household_income),
+  data = data
+)
+
+summary(model_updated_std)
+AIC(model_updated)
 ```
+
+Complex (Updated) Model Results
+
+A complex linear regression model was fitted to predict pain from age, sex, STAI_trait, pain catastrophizing, cortisol_serum, mindfulness, weight, IQ, and household_income. The model was adjusted based on diagnostics, removing problematic predictors (e.g., cortisol_saliva) to satisfy regression assumptions.
+
+Model fit statistics:
+
+Residual standard error = 0.9844 (df = 150)
+
+Multiple R² = 0.0859
+
+Adjusted R² = 0.0310
+
+F(9, 150) = 1.565, p = 0.1305
+
+AIC = 894.12
+
+The model explains a small proportion of variance in pain (adj. R² = 0.031) and is not statistically significant overall (p = 0.1305).
+
+Standardized regression coefficients (Beta) and unstandardized coefficients (B) with p-values:
+
+Predictor	B (unstandardized)	Beta (standardized)	p-value
+(Intercept)	2.045e-16	NA	1.000
+age	-0.0269	-0.027	0.773
+sexfemale	0.0261	0.026	0.759
+STAI_trait	0.0221	0.022	0.841
+pain_cat	0.0875	0.087	0.415
+cortisol_serum	0.2081	0.208	0.034 *
+mindfulness	-0.0125	-0.013	0.900
+weight	0.0377	0.038	0.643
+IQ	0.1002	0.100	0.217
+household_income	-0.0046	-0.005	0.955
+
+Interpretation:
+
+Only cortisol_serum shows a statistically significant association with pain (p = 0.034).
+
+All other predictors are non-significant (p > 0.05).
+
+The standardized coefficients indicate cortisol_serum has the largest relative effect among predictors.
+
+Overall, the complex model explains slightly more variance than the simple model (adj. R² = 0.031 vs. 0.018), but the improvement is not statistically significant.
+
+Regression equation (unstandardized coefficients):
+
+\text{pain} = 2.045 \times 10^{-16} + (-0.0269 \cdot \text{age}) + 0.0261 \cdot \text{sexfemale} + 0.0221 \cdot \text{STAI_trait} + 0.0875 \cdot \text{pain_cat} + 0.2081 \cdot \text{cortisol_serum} + (-0.0125 \cdot \text{mindfulness}) + 0.0377 \cdot \text{weight} + 0.1002 \cdot \text{IQ} + (-0.0046 \cdot \text{household_income})
 
 Compare the two models.
 
