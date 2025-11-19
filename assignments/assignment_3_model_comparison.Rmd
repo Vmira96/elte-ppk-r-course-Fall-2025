@@ -613,8 +613,36 @@ Despite the presence of the extreme outlier (observation 142), the overall varia
 Multicollinearity assumption
 
 ```{r}
+#### Multicollinearity check for updated model
 
+library(car)
+
+# Calculate VIF values
+vif_values_updated <- vif(model_updated)
+vif_values_updated
+
+# Optional: highlight predictors with VIF > 5
+vif_values_updated[vif_values_updated > 5]
 ```
+Checking Multicollinearity Assumption (Updated Model)
+
+Multicollinearity among predictors in the updated model was assessed using Variance Inflation Factor (VIF) values.
+
+vif_values_updated
+             age              sex       STAI_trait         pain_cat   cortisol_serum 
+        1.412413         1.179796         1.981438         1.884237         1.554931 
+     mindfulness           weight               IQ household_income 
+        1.619854         1.078366         1.070490         1.114364 
+
+No predictors have VIF > 5, indicating that multicollinearity is not a concern in this model.
+
+Interpretation:
+
+The predictors are not highly correlated with each other, and the regression coefficients are stable.
+
+Previous multicollinearity issues related to cortisol_serum and cortisol_saliva have been resolved by removing cortisol_saliva from the model.
+
+The updated model is stable and suitable for inference with respect to multicollinearity.
 
 ## Model comparison
 
