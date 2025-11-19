@@ -526,8 +526,31 @@ Overall, the majority of data points fit the model reasonably well, but attentio
 Normality assumption
 
 ```{r}
+#### Normality check for updated model
 
+# Extract residuals
+residuals_updated <- residuals(model_updated)
+
+# 1. Q-Q plot
+qqnorm(residuals_updated, main = "Q-Q Plot of Residuals (Updated Model)")
+qqline(residuals_updated, col = "red")
+
+# 2. Shapiro-Wilk test
+shapiro.test(residuals_updated)
 ```
+Checking Normality Assumption (Updated Model)
+
+The normality of residuals in the updated model was assessed using a Q-Q plot and the Shapiro-Wilk test.
+
+Q-Q plot: Residuals largely follow the reference line, indicating approximate normality. However, there is one extreme positive outlier at the high end, which deviates from the line.
+
+Shapiro-Wilk test: W = 0.31996, p < 2.2e-16, indicating a significant deviation from normality. The extremely low p-value is primarily driven by the single high outlier.
+
+Interpretation:
+
+Overall, the residuals are approximately normal, but the extreme positive outlier (observation 142) strongly influences the formal test.
+
+This outlier may affect t-values, p-values, and confidence intervals, so caution is advised in interpreting results.
 
 Linearity assumption
 
