@@ -555,8 +555,36 @@ This outlier may affect t-values, p-values, and confidence intervals, so caution
 Linearity assumption
 
 ```{r}
+#### Linearity check for updated model
 
+library(car)
+
+# 1. Residuals vs Fitted plot
+plot(model_updated$fitted.values, residuals(model_updated),
+     xlab = "Fitted values", ylab = "Residuals",
+     main = "Residuals vs Fitted Values (Updated Model)")
+abline(h = 0, col = "red")
+
+# 2. Component + Residual (partial residual) plots
+crPlots(model_updated) 
 ```
+Checking Linearity Assumption (Updated Model)
+
+Linearity between the dependent variable and each predictor in the updated model was assessed using Residuals vs Fitted plots and Component + Residual (CR) plots.
+
+Residuals vs Fitted plot: Most points are scattered around the horizontal line, indicating that the overall relationship between the fitted values and residuals is approximately linear.
+
+CR plots: For each predictor, residuals generally follow a straight line, suggesting a linear relationship with the dependent variable.
+
+Outlier: A single extreme observation (likely observation 142) appears in all plots, slightly deviating from the general trend.
+
+Interpretation:
+
+The linearity assumption is largely satisfied for the updated model.
+
+The extreme outlier may affect the residual pattern and the regression coefficients, but it does not invalidate the overall linear relationships.
+
+Handling the outlier (e.g., removal or robust regression) would likely make the linearity patterns even clearer.
 
 Homoscedasticty assumption (homogeneity of variance)
 
