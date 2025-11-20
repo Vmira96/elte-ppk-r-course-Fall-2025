@@ -32,7 +32,10 @@ Note: There are several different ways to solve these tasks, feel free to come u
 Read the cocktail dataset from: <https://github.com/nthun/cocktail-balance> You can also find the codebook there.
 
 ```{r}
+library(tidyverse)
+library(readr)
 
+cocktails <- read_tsv("https://raw.githubusercontent.com/nthun/cocktail-balance/master/cocktail_data.tsv")
 ```
 
 ## 2. Transform the data table and clean the ingredient variable!
@@ -40,7 +43,167 @@ Read the cocktail dataset from: <https://github.com/nthun/cocktail-balance> You 
 The ingredients are currently in a single cell for each cocktail. It would be better to put them in separate rows. Also, the variable should be cleaned of all quantities (e.g. 1/2 oz, 2 dashes, etc.), and the indicator of alcohol content (e.g. 47.3% abv). You will need to use this cleaned table in later tasks.
 
 ```{r}
+library(dplyr)
+library(stringr)
+library(tidyr)
 
+cocktails_clean <- cocktails %>%
+  mutate(ingredients = as.character(ingredients)) %>%
+
+  # Removing HTML tags
+  mutate(ingredients = str_replace_all(ingredients, "<br\\s*/?>", ","),
+         ingredients = str_replace_all(ingredients, "<[^>]+>", ",")) %>%
+
+  # Cleaning Unicode and non-ASCII characters 
+  mutate(
+    ingredients = str_replace_all(ingredients, "\\\\u[0-9a-fA-F]{4}", " "),
+    ingredients = str_replace_all(ingredients, "[^\\x00-\\x7F]", " ")
+  ) %>%
+
+  # Removal of fractions (1/2, 3/4, etc.)
+  mutate(ingredients = str_replace_all(ingredients, "\\b\\d+\\s*/\\s*\\d+\\b", " ")) %>%
+
+  # Standardization of bad separators 
+  mutate(ingredients = str_replace_all(ingredients, "[/\\\\]+", ",")) %>%
+
+  # Removal of lonely numbers 
+  mutate(ingredients = str_replace_all(ingredients,
+                                       "(^|,|\\n)\\s*\\.?\\s*\\d+\\s*\\.?\\s*(,|$)",
+                                       ",")) %>%
+
+  # Removal of quantities, alcohol % and parentheses
+  mutate(
+    ingredients = str_remove_all(ingredients, "\\([^\\)]*\\)"),       # ( ... )
+    ingredients = str_remove_all(ingredients, "[0-9]+\\.?[0-9]*%\\s*abv"),  # 47% abv
+    ingredients = str_remove_all(
+      ingredients,
+      "\\b\\d+\\s*(oz|ml|cl|tsp|tbsp|bsp|cup|part|dash(?:es)?|barspoon|drop(?:s)?)s?\\b"
+    ),
+    ingredients = str_remove_all(ingredients, "\\b\\d+\\b")
+  ) %>%
+
+  # Break into multiple lines
+  separate_rows(ingredients, sep = "[,\\n;]") %>%
+
+  # Cleaning whitespace
+  mutate(
+    ingredients = str_squish(ingredients),
+    ingredients = str_trim(ingredients),
+    ingredients = str_to_lower(ingredients)
+  ) %>%
+
+  # Filtering out junk lines 
+  filter(
+    ingredients != "",
+    !str_detect(ingredients, "^[\\d\\.\\s]+$"),
+    nchar(ingredients) > 1,
+    !str_detect(ingredients, "^\\W+$")
+  ) %>%
+
+  # Some common fixes
+  mutate(ingredients = str_replace_all(ingredients, "^lemon\\s*juice$", "lemon juice"),
+         ingredients = str_replace_all(ingredients, "^lime\\s*juice$", "lime juice")) %>%
+
+  distinct(name, ingredients, .keep_all = TRUE) %>%
+
+  # Second Cleaning round
+  mutate(ingredients = str_replace_all(ingredients, "(^|,)\\s*\\d+\\s*\\.\\s*", ",")) %>%
+  mutate(ingredients = str_squish(ingredients)) %>%
+  mutate(
+    ingredients = str_remove(ingredients, "^\\d+\\s*"),
+    ingredients = str_remove(ingredients, "^\\.*\\s*")
+  ) %>%
+
+  # Further uniform quantity removal
+  mutate(
+    ingredients = str_remove_all(
+      ingredients,
+      "\\b(oz|ml|cl|tsp|tbsp|bsp|cup|part|dash(?:es)?|barspoon|drop(?:s)?)\\b"
+    ),
+    ingredients = str_squish(ingredients)
+  ) %>%
+  filter(ingredients != "") %>%
+
+  # Final cleaning
+  mutate(
+    ingredients = str_remove_all(
+      ingredients,
+      "\\boz\\b|\\bml\\b|\\bcl\\b|\\btsp\\b|\\btbsp\\b|\\bbsp\\b|\\bcup\\b|\\bpart\\b|\\bdash(?:es)?\\b|\\bbarspoon\\b|\\bdrops?\\b"
+    ),
+    ingredients = str_squish(ingredients),
+    ingredients = str_trim(ingredients)
+  ) %>%
+  filter(ingredients != "")
+
+library(dplyr)
+library(stringr)
+
+# Redefinition of necessary variables
+units_pattern <- "oz|ml|cl|tsp|tbsp|bsp|cup|part|dash|dashes|barspoon|drop|drops"
+
+problems <- list(
+  numbers   = cocktails_clean %>% filter(str_detect(ingredients, "\\d")),
+  units     = cocktails_clean %>% filter(str_detect(ingredients, units_pattern)),
+  html      = cocktails_clean %>% filter(str_detect(ingredients, "<[^>]+>")),
+  non_ascii = cocktails_clean %>% filter(str_detect(ingredients, "[^\\x00-\\x7F]")),
+  symbols   = cocktails_clean %>% filter(str_detect(ingredients, "^\\W+$")),
+  empty     = cocktails_clean %>% filter(ingredients == "" | is.na(ingredients)),
+  short     = cocktails_clean %>% filter(nchar(ingredients) < 2)
+)
+
+lapply(problems, function(x) nrow(x))
+```
+
+```{r}
+# Cleaning further
+cocktails_clean %>%
+  filter(str_detect(ingredients, units_pattern)) %>%
+  distinct(ingredients)
+cocktails_clean <- cocktails_clean %>%
+  mutate(
+    ingredients = str_remove_all(
+      ingredients,
+      "\\b(oz|ml|cl|tsp|tbsp|bsp|cup|part|dash(?:es)?|barspoon|drop(?:s)?)\\b"
+    ),
+    ingredients = str_squish(ingredients)
+  )
+```
+
+```{r}
+library(dplyr)
+library(stringr)
+
+# Redefinition of necessary variables
+units_pattern <- "oz|ml|cl|tsp|tbsp|bsp|cup|part|dash|dashes|barspoon|drop|drops"
+
+problems <- list(
+  numbers   = cocktails_clean %>% filter(str_detect(ingredients, "\\d")),
+  units     = cocktails_clean %>% filter(str_detect(ingredients, units_pattern)),
+  html      = cocktails_clean %>% filter(str_detect(ingredients, "<[^>]+>")),
+  non_ascii = cocktails_clean %>% filter(str_detect(ingredients, "[^\\x00-\\x7F]")),
+  symbols   = cocktails_clean %>% filter(str_detect(ingredients, "^\\W+$")),
+  empty     = cocktails_clean %>% filter(ingredients == "" | is.na(ingredients)),
+  short     = cocktails_clean %>% filter(nchar(ingredients) < 2)
+)
+
+lapply(problems, function(x) nrow(x))
+```
+
+```{r}
+# Checking inspection
+cocktails_clean %>%
+  filter(str_detect(ingredients, units_pattern)) %>%
+  distinct(ingredients)
+```
+
+```{r}
+Checking again
+units_pattern <- "\\b(oz|ml|cl|tsp|tbsp|bsp|cup|part|dash(?:es)?|barspoon|drops?)\\b"
+check_units <- cocktails_clean %>% 
+  filter(str_detect(ingredients, units_pattern)) %>% 
+  distinct(ingredients)
+
+check_units
 ```
 
 ## 3. All ingredients in alphabetical order
