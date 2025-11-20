@@ -314,7 +314,15 @@ cocktails_with_rare_ingredients
 ## 9. What are the cocktails without rare ingredients?
 
 ```{r}
-  
+# 9. What are the cocktails without rare ingredients?
+
+cocktails_without_rare_ingredients <- cocktails_clean %>%
+  filter(!ingredients %in% rare_ingredient_names) %>%
+  distinct(name) %>%   
+  arrange(name)
+
+# Result
+cocktails_without_rare_ingredients 
 ```
 
 ## 10. Create a cheat sheet for the bartender!
