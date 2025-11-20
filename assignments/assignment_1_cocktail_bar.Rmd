@@ -338,7 +338,21 @@ tribble(~name, ~Lime, ~`White rum`, ~`Cane sugar`, ~`Coca-cola`, ~Mint, ~Soda,
 ```
 
 ```{r}
+library(tidyr)
+library(dplyr)
 
+# 1. Create the cheat sheet matrix
+cheat_sheet <- cocktails_clean %>%
+  mutate(value = "X") %>%  
+  pivot_wider(
+    names_from = ingredients,   
+    values_from = value,        
+    values_fill = ""            
+  ) %>%
+  arrange(name)                
+
+# 2. Result
+cheat_sheet
 ```
 
 
