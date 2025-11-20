@@ -278,7 +278,19 @@ detailed_result
 Count all cocktails with only one ingredient, and
 
 ```{r}
+## 7. How many ingredients appear in only one cocktail (rare ingredient)?
 
+# 1. Counting the times each ingredient appears
+ingredient_counts <- table(cocktails_clean$ingredients)
+
+# 2. Filter out those that appear only once
+rare_ingredients <- ingredient_counts[ingredient_counts == 1]
+
+#3. How many rare ingredients are there?
+num_rare_ingredients <- length(rare_ingredients)
+
+# Result
+num_rare_ingredients
 ```
 
 ## 8. Which cocktail has an ingredient that is only used in one cocktail?
