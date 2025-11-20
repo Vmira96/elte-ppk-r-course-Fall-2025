@@ -223,7 +223,12 @@ View(ingredients_list)
 How many different ingredients you will need?
 
 ```{r}
+# 4. Number of unique ingredients
+unique_ingredients_count <- cocktails_clean %>%
+  distinct(ingredients) %>%
+  nrow()
 
+unique_ingredients_count
 ```
 
 ## 5. What are the top 10 ingredients?
