@@ -296,7 +296,19 @@ num_rare_ingredients
 ## 8. Which cocktail has an ingredient that is only used in one cocktail?
 
 ```{r}
+## 8. Which cocktail has an ingredient that is only used in one cocktail?
 
+# 1. Rare ingredients
+rare_ingredient_names <- names(rare_ingredients)
+
+# 2. Coctails with rare ingredients
+cocktails_with_rare_ingredients <- cocktails_clean %>%
+  filter(ingredients %in% rare_ingredient_names) %>%
+  distinct(name, ingredients) %>%  # csak a koktél és az összetevő
+  arrange(name)
+
+# 3. Result
+cocktails_with_rare_ingredients
 ```
 
 ## 9. What are the cocktails without rare ingredients?
