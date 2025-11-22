@@ -136,10 +136,6 @@ commute_summary <- commute_data %>%
 # Checking the column names
 colnames(commute_summary)
 
-# Error detection
-commute_summary <- commute_summary %>%
-  filter(Bike > 0, Walk > 0)
-
 # ggplot and geom_point
 ggplot(commute_summary, aes(x = Bike, y = Walk)) +
   geom_point(size = 2) +
