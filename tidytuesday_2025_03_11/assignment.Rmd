@@ -1,0 +1,11 @@
+---
+title: "TidyTuesday 2025-03-11"
+author: "Vikár Mira"
+output: html_document
+---
+
+# Load packages
+
+```{r}
+library(tidyverse)
+library(readr)
