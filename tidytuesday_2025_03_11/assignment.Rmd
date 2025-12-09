@@ -1,6 +1,6 @@
 ---
 title: "TidyTuesday 2025-03-11"
-author: "Vikár Mira"
+author: "Vikár Míra"
 output: html_document
 ---
 
