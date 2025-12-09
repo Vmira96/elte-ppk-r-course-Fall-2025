@@ -1,8 +1,12 @@
 ---
-title: "TidyTuesday 2025-03-11"
+title: "TidyTuesday 2025-03-11" - "Pixar films"
 author: "Vikár Míra"
 output: html_document
 ---
+
+In this project, I examine data from Pixar films.  
+My goal is to explore data patterns (EDA) and then build, compare, and evaluate at least two models.  
+The data analysis is fully reproducible, and all code is available in Rmd.
 
 # Load packages
 
@@ -24,7 +28,7 @@ public_response <- readr::read_csv(
 )
 ```
 ```{r}
-# Pixar dataset head nad glimpse
+# Pixar dataset head and glimpse
 head(pixar_films)
 head(public_response)
 knitr::kable(head(pixar_films))
@@ -32,4 +36,123 @@ knitr::kable(head(public_response))
 glimpse(pixar_films)
 glimpse(public_response)
 ```
+## 1. Data cleaning
+- adatok betöltése
+- alap takarítás
+- változók magyarázata
+- fontos lépések kommentelve
 
+```{r}
+#Examining variable types and missing data
+glimpse(pixar_films)
+summary(pixar_films)
+
+glimpse(public_response)
+summary(public_response)
+```
+
+```{r}
+#exemination of missing values
+public_response %>%
+  filter(is.na(critics_choice) | is.na(rotten_tomatoes))
+```
+
+Data Overview and Initial Cleaning Steps
+Before starting the analysis, I examined the dataset to understand its structure and identify potential data quality issues. The dataset contains 24 Pixar films and includes the following variables:
+
+film (character) – The title of the movie.
+
+rotten_tomatoes (numeric) – Percentage score from Rotten Tomatoes.
+
+metacritic (numeric) – Metacritic critic score (0–100).
+
+cinema_score (character) – Audience grade (A, A+, etc.).
+
+critics_choice (numeric) – Critics’ Choice rating (0–100).
+
+Summary of Key Findings
+A first look using glimpse() and summary() revealed the following:
+
+All variables were loaded correctly with the expected data types.
+
+cinema_score is stored as a character variable, not numeric, because it contains letter-based grades (e.g., A, A+).
+
+Some variables include missing values (NA):
+
+critics_choice: 3 missing values
+
+metacritic: 1 missing value
+
+cinema_score: 1 missing value
+
+I also inspected rows containing missing data. These came exclusively from the film “Luca” and two early films where Critics Choice ratings were not available.
+
+Next Step: Data Cleaning Plan
+Since the dataset is small and missing values are minimal, carefully handling NAs is important. I will:
+Convert cinema_score to an ordered factor
+Dealing with missing values.
+
+```{r}
+# Convert cinema_score to an ordered factor
+public_response <- public_response %>%
+  mutate(
+    cinema_score = factor(
+      cinema_score,
+      levels = c("A-", "A", "A+"),   # adjust if more categories appear
+      ordered = TRUE
+    )
+  )
+
+```
+
+## 2. Exploratory Data Analysis (EDA)
+- legalább **két ember számára érthető, jól feliratozott plot**
+- rövid értelmezés a grafikák alatt
+- táblázatok és statisztikák
+
+```{r}
+
+
+```
+
+## 3. Modellek építése
+- legalább **két modell** ugyanarra az outcome változóra
+  - pl. lineáris modell, logisztikus, random forest, stb.
+- modell-összehasonlítás
+  - AIC, RMSE, accuracy stb.
+- rövid konklúzió: melyik jobb és miért?
+
+```{r}
+
+
+```
+
+## 4. Modellek értékelése
+- **assumption check + residual diagnostics**
+  - pl. QQ plot, residuals vs fitted plot
+- értelmezés: mi látszik, rendben vannak-e a feltételek?
+
+```{r}
+
+
+```
+
+## 5. Következtetések / Report
+- összefoglalás emberi nyelven
+- mik a tanulságok?
+- mit találtál érdekesnek?
+
+```{r}
+
+
+```
+
+## 6. Kreatív rész (ha szeretnél)
+- extra vizualizációk
+- extra kérdések
+- saját ötletek
+
+```{r}
+
+
+```
