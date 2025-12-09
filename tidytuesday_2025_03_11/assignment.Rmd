@@ -1,5 +1,5 @@
 ---
-title: "TidyTuesday 2025-03-11" - "Pixar films"
+title: "TidyTuesday 2025-03-11 - Pixar films"
 author: "Vikár Míra"
 output: html_document
 ---
