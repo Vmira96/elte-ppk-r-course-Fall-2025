@@ -9,3 +9,26 @@ output: html_document
 ```{r}
 library(tidyverse)
 library(readr)
+```
+
+```{r}
+# Importing the Pixar dataset directly from GitHub
+
+pixar_films <- readr::read_csv(
+  "https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-03-11/pixar_films.csv"
+)
+
+public_response <- readr::read_csv(
+  "https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-03-11/public_response.csv"
+)
+```
+```{r}
+# Pixar dataset head nad glimpse
+head(pixar_films)
+head(public_response)
+knitr::kable(head(pixar_films))
+knitr::kable(head(public_response))
+glimpse(pixar_films)
+glimpse(public_response)
+```
+
