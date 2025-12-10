@@ -2,6 +2,7 @@
 title: "TidyTuesday 2025-03-11 - Pixar films"
 author: "Vikár Míra"
 output: html_document
+knit: rmarkdown::render
 ---
 
 In this project, I examine data from Pixar films.  

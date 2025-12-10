@@ -371,8 +371,10 @@ pixar_films &lt;- readr::read_csv(
 public_response &lt;- readr::read_csv(
   &quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-03-11/public_response.csv&quot;
 )</code></pre>
-<pre class="r"><code># Pixar dataset head and glimpse
-head(pixar_films)</code></pre>
+</div>
+<div id="pixar-dataset-head-and-glimpse" class="section level1">
+<h1>Pixar dataset head and glimpse</h1>
+<pre class="r"><code>head(pixar_films)</code></pre>
 <pre><code>## # A tibble: 6 × 5
 ##   number film            release_date run_time film_rating
 ##    &lt;dbl&gt; &lt;chr&gt;           &lt;date&gt;          &lt;dbl&gt; &lt;chr&gt;      
@@ -529,14 +531,8 @@ head(pixar_films)</code></pre>
 ## $ critics_choice  &lt;dbl&gt; NA, NA, 100, 92, 97, 88, 89, 91, 90, 95, 97, 67, 81, 7…</code></pre>
 <div id="data-cleaning" class="section level2">
 <h2>1. Data cleaning</h2>
-<ul>
-<li>adatok betöltése</li>
-<li>alap takarítás</li>
-<li>változók magyarázata</li>
-<li>fontos lépések kommentelve</li>
-</ul>
-<pre class="r"><code>#Examining variable types and missing data
-glimpse(pixar_films)</code></pre>
+<p>#Examining variable types and missing data</p>
+<pre class="r"><code>glimpse(pixar_films)</code></pre>
 <pre><code>## Rows: 27
 ## Columns: 5
 ## $ number       &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17…
@@ -586,8 +582,11 @@ glimpse(pixar_films)</code></pre>
 ##  3rd Qu.: 93.00  
 ##  Max.   :100.00  
 ##  NA&#39;s   :3</code></pre>
-<pre class="r"><code>#exemination of missing values
-public_response %&gt;%
+</div>
+</div>
+<div id="exemination-of-missing-values" class="section level1">
+<h1>Exemination of missing values</h1>
+<pre class="r"><code>public_response %&gt;%
   filter(is.na(critics_choice) | is.na(rotten_tomatoes))</code></pre>
 <pre><code>## # A tibble: 3 × 5
 ##   film         rotten_tomatoes metacritic cinema_score critics_choice
@@ -618,10 +617,25 @@ it contains letter-based grades (e.g., A, A+).</p>
 from the film “Luca” and two early films where Critics Choice ratings
 were not available.</p>
 <p>Next Step: Data Cleaning Plan Since the dataset is small and missing
-values are minimal, carefully handling NAs is important. I will: Convert
-cinema_score to an ordered factor Dealing with missing values.</p>
-<pre class="r"><code># Convert cinema_score to an ordered factor
-public_response &lt;- public_response %&gt;%
+values are minimal, carefully handling NAs is important.</p>
+</div>
+<div id="handling-missing-data" class="section level1">
+<h1>Handling Missing Data</h1>
+<p>Before proceeding with the exploratory data analysis (EDA), it is
+essential to examine the dataset for missing values. Missing data can
+influence summary statistics, distort visualisations, and potentially
+introduce bias during model building. Therefore, identifying and
+addressing these values is a necessary first step.</p>
+<p>Treatment Strategy Because the missingness is low in proportion and
+the affected variables serve different analytical purposes, we apply the
+following approach:</p>
+<p>cinema_score: We convert this variable into an ordered factor with
+levels A- &lt; A &lt; A+. The single missing value is left as NA, as
+imputing an ordered rating would introduce artificial information.</p>
+</div>
+<div id="convert-cinema_score-to-an-ordered-factor" class="section level1">
+<h1>Convert cinema_score to an ordered factor</h1>
+<pre class="r"><code>public_response &lt;- public_response %&gt;%
   mutate(
     cinema_score = factor(
       cinema_score,
@@ -629,7 +643,29 @@ public_response &lt;- public_response %&gt;%
       ordered = TRUE
     )
   )</code></pre>
+<p>critics_choice: Since this is a numerical rating derived from awards
+evaluation, imputing a synthetic score would not be justified. These
+values are therefore retained as NA and will be handled appropriately
+during later modelling (e.g., filtering out incomplete rows or using
+models that support missingness).</p>
+<p>Verification After these transformations, we confirm that the missing
+values remain only in the intended variables:</p>
+<p>#Checking the type of variable</p>
+<pre class="r"><code>str(public_response$cinema_score)</code></pre>
+<pre><code>##  Ord.factor w/ 3 levels &quot;A-&quot;&lt;&quot;A&quot;&lt;&quot;A+&quot;: 2 2 3 3 3 3 2 2 2 3 ...</code></pre>
+<p>#Checking values and sequences</p>
+<pre class="r"><code>levels(public_response$cinema_score)</code></pre>
+<pre><code>## [1] &quot;A-&quot; &quot;A&quot;  &quot;A+&quot;</code></pre>
 </div>
+<div id="check-missing-values-again" class="section level1">
+<h1>Check missing values again</h1>
+<pre class="r"><code>public_response %&gt;% summarise(across(everything(), ~ sum(is.na(.))))</code></pre>
+<pre><code>## # A tibble: 1 × 5
+##    film rotten_tomatoes metacritic cinema_score critics_choice
+##   &lt;int&gt;           &lt;int&gt;      &lt;int&gt;        &lt;int&gt;          &lt;int&gt;
+## 1     0               1          1            2              3</code></pre>
+<p>This ensures that the dataset is clean, consistent, and properly
+structured for the next steps in the analysis.</p>
 <div id="exploratory-data-analysis-eda" class="section level2">
 <h2>2. Exploratory Data Analysis (EDA)</h2>
 <ul>
