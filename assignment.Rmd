@@ -27,8 +27,9 @@ public_response <- readr::read_csv(
   "https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-03-11/public_response.csv"
 )
 ```
-```{r}
+
 # Pixar dataset head and glimpse
+```{r}
 head(pixar_films)
 head(public_response)
 knitr::kable(head(pixar_films))
@@ -36,14 +37,10 @@ knitr::kable(head(public_response))
 glimpse(pixar_films)
 glimpse(public_response)
 ```
-## 1. Data cleaning
-- adatok betöltése
-- alap takarítás
-- változók magyarázata
-- fontos lépések kommentelve
 
-```{r}
+## 1. Data cleaning
 #Examining variable types and missing data
+```{r}
 glimpse(pixar_films)
 summary(pixar_films)
 
@@ -51,8 +48,8 @@ glimpse(public_response)
 summary(public_response)
 ```
 
+# Exemination of missing values
 ```{r}
-#exemination of missing values
 public_response %>%
   filter(is.na(critics_choice) | is.na(rotten_tomatoes))
 ```
@@ -88,12 +85,27 @@ cinema_score: 1 missing value
 I also inspected rows containing missing data. These came exclusively from the film “Luca” and two early films where Critics Choice ratings were not available.
 
 Next Step: Data Cleaning Plan
-Since the dataset is small and missing values are minimal, carefully handling NAs is important. I will:
-Convert cinema_score to an ordered factor
-Dealing with missing values.
+Since the dataset is small and missing values are minimal, carefully handling NAs is important. 
 
-```{r}
+# Handling Missing Data
+
+Before proceeding with the exploratory data analysis (EDA), it is essential to
+examine the dataset for missing values. Missing data can influence summary
+statistics, distort visualisations, and potentially introduce bias during
+model building. Therefore, identifying and addressing these values is a
+necessary first step.
+
+Treatment Strategy
+Because the missingness is low in proportion and the affected variables serve
+different analytical purposes, we apply the following approach:
+
+cinema_score:
+We convert this variable into an ordered factor with levels
+A- < A < A+. The single missing value is left as NA, as imputing an
+ordered rating would introduce artificial information.
+
 # Convert cinema_score to an ordered factor
+```{r}
 public_response <- public_response %>%
   mutate(
     cinema_score = factor(
@@ -104,6 +116,32 @@ public_response <- public_response %>%
   )
 
 ```
+
+critics_choice:
+Since this is a numerical rating derived from awards evaluation, imputing
+a synthetic score would not be justified. These values are therefore
+retained as NA and will be handled appropriately during later modelling
+(e.g., filtering out incomplete rows or using models that support missingness).
+
+Verification
+After these transformations, we confirm that the missing values remain only in
+the intended variables:
+
+#Checking the type of variable
+```{r}
+str(public_response$cinema_score)
+```
+#Checking values and sequences
+```{r}
+levels(public_response$cinema_score)
+```
+
+# Check missing values again
+```{r}
+public_response %>% summarise(across(everything(), ~ sum(is.na(.))))
+```  
+This ensures that the dataset is clean, consistent, and properly structured
+for the next steps in the analysis.
 
 ## 2. Exploratory Data Analysis (EDA)
 - legalább **két ember számára érthető, jól feliratozott plot**
