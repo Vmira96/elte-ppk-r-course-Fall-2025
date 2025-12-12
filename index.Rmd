@@ -304,6 +304,68 @@ wilcox.test(run_time ~ film_rating, data = clean_films)
 After filtering the dataset to include only the meaningful MPAA categories (“G” and “PG”), I examined whether film rating is associated with differences in runtime. A Wilcoxon rank-sum test showed no statistically significant difference between the two groups (W = 64, p = 0.975). This indicates that Pixar’s G‑rated and PG‑rated movies do not differ in their typical runtimes. In practice, this suggests that film length is unrelated to the assigned age rating, and Pixar maintains similar durations across both categories.
 
 
+### 2.8 Changes in run time (film length) over time
+
+```{r}
+library(lubridate)
+
+pixar_films <- pixar_films %>%
+  mutate(release_year = year(release_date))
+```
+
+
+```{r}
+model_runtime_year <- lm(run_time ~ release_year, data = pixar_films)
+summary(model_runtime_year)
+
+plot(model_runtime_year)
+
+pixar_films %>%
+  ggplot(aes(x = release_date, y = run_time)) +
+  geom_point(color = "#0072B2", size = 3) +
+  geom_smooth(method = "lm", se = TRUE, color = "red") +
+  labs(
+    title = "Film length in time",
+    x = "Date of publication",
+    y = "Length (minutes)"
+  )
+```
+
+A simple linear regression was performed to examine whether Pixar film runtimes have changed across release years. The model shows a significant positive relationship between release year and runtime (β = 1.078, p = 0.0098). This means that, on average, Pixar movies have become about 1.1 minutes longer each year.
+
+The model explains approximately 25.6% of the variance in runtimes (R² = 0.256), which indicates a moderate relationship: release year is a meaningful, but not exclusive, predictor of runtime. The residual standard error (14.78 minutes) suggests that runtimes still vary substantially beyond the trend captured by the model.
+
+Overall, the results support the conclusion that Pixar movies tend to get longer over time, although year alone does not account for all runtime differences.
+
+
+### 2.9 Trends in critical reviews over time
+
+```{r}
+public_response %>%
+  left_join(pixar_films, by = "film") %>%
+  ggplot(aes(x = release_date, y = rotten_tomatoes)) +
+  geom_point(color = "#E69F00", size = 3) +
+  geom_smooth(method = "lm", se = TRUE, color = "red") +
+  labs(
+    title = "Rotten Tomatoes score over time",
+    x = "Date of publication",
+    y = "RT score"
+  )
+```
+
+
+### 2.10 How much does time matter when it comes to movie ratings (G vs. PG)?
+```{r}
+pixar_films %>%
+  ggplot(aes(x = release_date, fill = film_rating)) +
+  geom_bar() +
+  labs(
+    title = "Movie ratings over time",
+    x = "Date of publication",
+    y = "Number of pieces"
+  )
+```
+
 ## 3. Modellek építése
 - legalább **két modell** ugyanarra az outcome változóra
   - pl. lineáris modell, logisztikus, random forest, stb.
