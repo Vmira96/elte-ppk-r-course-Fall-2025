@@ -472,7 +472,7 @@ plot</strong></li>
   labs(title = &quot;Distribution of Rotten Tomatoes Scores&quot;,
        x = &quot;Rotten Tomatoes&quot;,
        y = &quot;Count&quot;)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-26-1.png" width="672" />
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" width="672" />
 Exploratory Data Analysis – Rotten Tomatoes Distribution (Rewritten) The
 distribution of Rotten Tomatoes scores shows a clear right skew,
 indicating that most films receive relatively high ratings while lower
@@ -492,7 +492,7 @@ class="section level3">
   geom_point(color = &quot;#1f78b4&quot;, size = 3) +
   geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;red&quot;) +
   labs(title = &quot;Relation Between Rotten Tomatoes and Metacritic Scores&quot;)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 </div>
 <div id="pearson-correlation-and-significance-test"
 class="section level3">
@@ -538,7 +538,7 @@ platforms provide largely consistent evaluations of film quality.</p>
   geom_histogram(fill = &quot;#0073C2FF&quot;, color = &quot;white&quot;, bins = 10) +
   labs(title = &quot;Distribution of Film Runtime&quot;,
        x = &quot;Runtime (minutes)&quot;, y = &quot;Count&quot;)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 </div>
 <div id="basic-descriptive-statistics-for-the-length-of-the-film"
 class="section level3">
@@ -588,7 +588,7 @@ ggplot(ratings_long %&gt;% left_join(pixar_films, by = &quot;film&quot;),
     y = &quot;Rating&quot;
   ) +
   theme_minimal()</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
 <div
 id="run_time-vs-rotten-tomatoes-metacritic-critics-choice-correlations"
@@ -655,7 +655,7 @@ unique(clean_films$film_rating)</code></pre>
   labs(title = &quot;Distribution of Film Ratings&quot;,
        x = &quot;Rating&quot;,
        y = &quot;Count&quot;)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 </div>
 <div
 id="frequency-of-film-ratings-and-its-association-with-running-time"
@@ -718,7 +718,7 @@ summary(model_runtime_year)</code></pre>
 ## Multiple R-squared:  0.2562, Adjusted R-squared:  0.2239 
 ## F-statistic: 7.923 on 1 and 23 DF,  p-value: 0.009829</code></pre>
 <pre class="r"><code>plot(model_runtime_year)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-37-1.png" width="672" /><img src="index_files/figure-html/unnamed-chunk-37-2.png" width="672" /><img src="index_files/figure-html/unnamed-chunk-37-3.png" width="672" /><img src="index_files/figure-html/unnamed-chunk-37-4.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-21-1.png" width="672" /><img src="index_files/figure-html/unnamed-chunk-21-2.png" width="672" /><img src="index_files/figure-html/unnamed-chunk-21-3.png" width="672" /><img src="index_files/figure-html/unnamed-chunk-21-4.png" width="672" /></p>
 <pre class="r"><code>pixar_films %&gt;%
   ggplot(aes(x = release_date, y = run_time)) +
   geom_point(color = &quot;#0072B2&quot;, size = 3) +
@@ -728,7 +728,7 @@ summary(model_runtime_year)</code></pre>
     x = &quot;Date of publication&quot;,
     y = &quot;Length (minutes)&quot;
   )</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-37-5.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-21-5.png" width="672" /></p>
 <p>A simple linear regression was performed to examine whether Pixar
 film runtimes have changed across release years. The model shows a
 significant positive relationship between release year and runtime (β =
@@ -799,7 +799,7 @@ summary(rating_model)</code></pre>
     x = &quot;Date of publication&quot;,
     y = &quot;Number of pieces&quot;
   )</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-38-1.png" width="672" />
+<p><img src="index_files/figure-html/unnamed-chunk-22-1.png" width="672" />
 The plot shows how movie ratings have changed over time across the Pixar
 dataset. Early releases are almost exclusively rated G, but from the
 late 2000s onward PG-rated films appear more frequently, and they
@@ -814,6 +814,29 @@ more likely to receive a PG rating.</p>
 </div>
 <div id="trends-in-critical-reviews-over-time" class="section level3">
 <h3>2.10 Trends in critical reviews over time</h3>
+<pre class="r"><code>public_response2 &lt;- public_response %&gt;%
+  left_join(pixar_films, by = &quot;film&quot;) %&gt;%
+  mutate(release_year = as.numeric(format(release_date, &quot;%Y&quot;)))
+
+rt_model &lt;- lm(rotten_tomatoes ~ release_year, data = public_response2)
+summary(rt_model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = rotten_tomatoes ~ release_year, data = public_response2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -48.825  -5.034   5.364   7.778  11.389 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)  896.6263   811.9014   1.104    0.282
+## release_year  -0.4017     0.4039  -0.995    0.331
+## 
+## Residual standard error: 14.16 on 21 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.04498,    Adjusted R-squared:  -0.0004964 
+## F-statistic: 0.9891 on 1 and 21 DF,  p-value: 0.3313</code></pre>
 <pre class="r"><code>public_response %&gt;%
   left_join(pixar_films, by = &quot;film&quot;) %&gt;%
   ggplot(aes(x = release_date, y = rotten_tomatoes)) +
@@ -824,7 +847,20 @@ more likely to receive a PG rating.</p>
     x = &quot;Date of publication&quot;,
     y = &quot;RT score&quot;
   )</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-23-1.png" width="672" />
+The scatterplot shows Rotten Tomatoes scores across release years,
+together with a fitted linear trend. The distribution of points suggests
+no strong upward or downward pattern in critical reception over
+time.</p>
+<p>The linear regression model confirms this visually observed result.
+The slope of the regression line is small and negative (β = –0.40), but
+not statistically significant (p = 0.33). The model explains almost none
+of the variance in the scores (adjusted R² ≈ 0). This indicates that
+release year is not a meaningful predictor of Rotten Tomatoes ratings in
+this dataset.</p>
+<p>Overall, the analysis suggests that Pixar films have maintained
+relatively stable critical reception over time, without a clear
+long-term improvement or decline.</p>
 </div>
 </div>
 <div id="modellek-építése" class="section level2">
