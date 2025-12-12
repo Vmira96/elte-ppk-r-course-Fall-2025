@@ -335,10 +335,43 @@ A simple linear regression was performed to examine whether Pixar film runtimes 
 
 The model explains approximately 25.6% of the variance in runtimes (R² = 0.256), which indicates a moderate relationship: release year is a meaningful, but not exclusive, predictor of runtime. The residual standard error (14.78 minutes) suggests that runtimes still vary substantially beyond the trend captured by the model.
 
+We should also consider that The scatterplot suggests a very mild upward trend in movie runtimes over time, but the pattern is far from linear. The smoothing curve is wavy, implying that runtimes fluctuate rather than follow a steady increase. Three clear outliers appear at fitted values around 98, 115, and 118 minutes, corresponding to unusually short or long movies compared with their release-year peers.
+The residuals-vs-fitted plot shows non‑random structure: the loess curve bends several times, indicating model misspecification and suggesting that a linear model does not fit the data well. Additionally, the Q–Q plot shows noticeable deviations from normality at both ends, driven largely by the same outliers identified earlier.
+
 Overall, the results support the conclusion that Pixar movies tend to get longer over time, although year alone does not account for all runtime differences.
 
 
-### 2.9 Trends in critical reviews over time
+
+### 2.9 How much does time matter when it comes to movie ratings (G vs. PG)?
+```{r}
+# Add release_year
+clean_films <- clean_films %>%
+  mutate(release_year = lubridate::year(release_date))
+
+# Convert rating to binary (PG = 1, G = 0)
+clean_films$rating_binary <- ifelse(clean_films$film_rating == "PG", 1, 0)
+
+# Logistic regression: does rating depend on release year?
+rating_model <- glm(rating_binary ~ release_year, 
+                    data = clean_films, 
+                    family = binomial)
+
+summary(rating_model)
+
+pixar_films %>%
+  ggplot(aes(x = release_date, fill = film_rating)) +
+  geom_bar() +
+  labs(
+    title = "Movie ratings over time",
+    x = "Date of publication",
+    y = "Number of pieces"
+  )
+```
+The plot shows how movie ratings have changed over time across the Pixar dataset. Early releases are almost exclusively rated G, but from the late 2000s onward PG-rated films appear more frequently, and they gradually become the dominant category. A few films in the 2020s have missing or “Not Rated” labels, but these represent isolated cases rather than a trend.
+
+To quantify this visually observable shift, I fitted a logistic regression predicting the probability of a movie being PG based on its release year. The model shows a significant positive effect of release year (p = 0.0246), meaning that movies released later are statistically more likely to receive a PG rating.
+
+### 2.10 Trends in critical reviews over time
 
 ```{r}
 public_response %>%
@@ -353,18 +386,6 @@ public_response %>%
   )
 ```
 
-
-### 2.10 How much does time matter when it comes to movie ratings (G vs. PG)?
-```{r}
-pixar_films %>%
-  ggplot(aes(x = release_date, fill = film_rating)) +
-  geom_bar() +
-  labs(
-    title = "Movie ratings over time",
-    x = "Date of publication",
-    y = "Number of pieces"
-  )
-```
 
 ## 3. Modellek építése
 - legalább **két modell** ugyanarra az outcome változóra
