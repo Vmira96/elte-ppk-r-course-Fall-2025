@@ -155,10 +155,21 @@ public_response %>%
   ggplot(aes(x = rotten_tomatoes)) +
   geom_histogram(binwidth = 5, fill = "#69b3a2") +
   labs(title = "Distribution of Rotten Tomatoes Scores",
-       x = "Rotten Tomatoes (%)",
+       x = "Rotten Tomatoes",
        y = "Count")
 
 ```
+Exploratory Data Analysis – Rotten Tomatoes Distribution (Rewritten)
+The distribution of Rotten Tomatoes scores shows a clear right skew, indicating that most films receive relatively high ratings while lower scores are less common. Visual inspection suggests three noticeable clusters:
+
+a small group around 40 points,
+
+a medium‑sized cluster between 68 and 82 points, and
+
+a prominent concentration between 87 and 100 points.
+
+These clusters imply that the rating system, which ranges from 0 to 100, tends to group films into distinct quality tiers, with the majority achieving comparatively strong critical evaluations.
+
 
 ### 2.2 Rotten Tomatoes vs Metacritic scatterplot
 Goal: to show how closely critics' scores correlate.
@@ -169,6 +180,24 @@ ggplot(public_response, aes(rotten_tomatoes, metacritic)) +
   geom_smooth(method = "lm", se = FALSE, color = "red") +
   labs(title = "Relation Between Rotten Tomatoes and Metacritic Scores")
 ```
+
+### 2.3 Pearson-korreláció és szignifikanciateszt
+```{r}
+cor_test_result <- cor.test(
+  public_response$rotten_tomatoes,
+  public_response$metacritic,
+  method = "pearson"
+)
+
+cor_test_result
+
+```
+Correlation Between Rotten Tomatoes and Metacritic Scores
+A scatterplot was used to explore the association between Rotten Tomatoes scores and Metacritic ratings. Visual inspection suggested a clear positive relationship: films with lower Rotten Tomatoes scores (around 40–70) tend to receive relatively modest Metacritic ratings, while films scoring above 90 on Rotten Tomatoes cluster between roughly 76 and 92 on Metacritic. This pattern indicates increasing agreement between the two rating systems as film quality rises.
+
+To quantify this relationship, a Pearson product–moment correlation was calculated. The results revealed a strong, positive, and statistically significant correlation between Rotten Tomatoes and Metacritic scores (r = 0.80, t(21) = 6.17, p < 0.001). The 95% confidence interval [0.58, 0.91] further supports the conclusion that the association is reliably above zero.
+
+Overall, the analysis suggests that the two critic-based rating platforms provide largely consistent evaluations of film quality.
 
 
 ## 3. Modellek építése
