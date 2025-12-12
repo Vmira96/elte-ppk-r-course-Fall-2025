@@ -228,6 +228,44 @@ summary_stats
 ```
 The distribution of film run times is approximately normal, with most movies lasting between 80 and 120 minutes. The mean run time is 104.8 minutes (median = 102 minutes, SD = 16.8), indicating that typical Pixar films cluster closely around a roughly 100‑minute length. The minimum run time is 81 minutes, while two substantially longer films extend the range up to 155 minutes. These long outliers create a mild right skew in an otherwise symmetric distribution.
 
+### 2.5 run_time vs Rotten Tomatoes, Metacritic, Critics Choice
+
+```{r}
+library(dplyr)
+library(tidyr)
+
+ratings_long <- public_response %>%
+  pivot_longer(cols = c(rotten_tomatoes, metacritic, critics_choice),
+               names_to = "rating_type",
+               values_to = "rating")
+
+ggplot(ratings_long %>% left_join(pixar_films, by = "film"),
+       aes(x = run_time, y = rating)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  facet_wrap(~ rating_type, scales = "free_y") +
+  labs(
+    title = "Runtime vs Ratings (Multiple Sources)",
+    x = "Runtime (minutes)",
+    y = "Rating"
+  ) +
+  theme_minimal()
+
+
+```
+
+
+### 2.6 run_time vs Rotten Tomatoes, Metacritic, Critics Choice Correlations
+```{r}
+df <- left_join(pixar_films, public_response, by = "film")
+
+cor.test(df$run_time, df$rotten_tomatoes)
+cor.test(df$run_time, df$metacritic)
+cor.test(df$run_time, df$critics_choice)
+
+```
+Correlation analyses were conducted to examine the association between film run time and three measures of critical response (Rotten Tomatoes, Metacritic, Critics’ Choice). Across all three comparisons, results indicated no statistically significant relationship. Run time showed a weak, negative, and non-significant correlation with Rotten Tomatoes scores (r = –0.22, p = .315), Metacritic scores (r = –0.13, p = .564), and Critics’ Choice ratings (r = –0.13, p = .577). The confidence intervals for all estimates included zero, suggesting that film length is not meaningfully associated with critical evaluations. These findings also align with the scatterplots, which show no clear linear trend.
+
 
 
 
@@ -239,10 +277,7 @@ The distribution of film run times is approximately normal, with most movies las
 - rövid konklúzió: melyik jobb és miért?
 
 
-
-
 ```{r}
-
 
 ```
 
