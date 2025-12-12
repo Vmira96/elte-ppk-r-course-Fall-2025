@@ -58,6 +58,8 @@ public_response %>%
   filter(is.na(critics_choice) | is.na(rotten_tomatoes))
 ```
 
+
+
 Data Overview and Initial Cleaning Steps
 Before starting the analysis, I examined the dataset to understand its structure and identify potential data quality issues. The dataset contains 24 Pixar films and includes the following variables:
 
@@ -121,6 +123,8 @@ public_response <- public_response %>%
 
 ```
 
+
+
 critics_choice:
 Since this is a numerical rating derived from awards evaluation, imputing
 a synthetic score would not be justified. These values are therefore
@@ -144,6 +148,9 @@ levels(public_response$cinema_score)
 ```{r}
 public_response %>% summarise(across(everything(), ~ sum(is.na(.))))
 ```  
+
+
+
 This ensures that the dataset is clean, consistent, and properly structured
 for the next steps in the analysis.
 
@@ -162,6 +169,9 @@ public_response %>%
        y = "Count")
 
 ```
+
+
+
 Exploratory Data Analysis – Rotten Tomatoes Distribution (Rewritten)
 The distribution of Rotten Tomatoes scores shows a clear right skew, indicating that most films receive relatively high ratings while lower scores are less common. Visual inspection suggests three noticeable clusters:
 
@@ -195,6 +205,9 @@ cor_test_result <- cor.test(
 cor_test_result
 
 ```
+
+
+
 Correlation Between Rotten Tomatoes and Metacritic Scores
 A scatterplot was used to explore the association between Rotten Tomatoes scores and Metacritic ratings. Visual inspection suggested a clear positive relationship: films with lower Rotten Tomatoes scores (around 40–70) tend to receive relatively modest Metacritic ratings, while films scoring above 90 on Rotten Tomatoes cluster between roughly 76 and 92 on Metacritic. This pattern indicates increasing agreement between the two rating systems as film quality rises.
 
@@ -227,6 +240,9 @@ summary_stats <- pixar_films %>%
 summary_stats
 
 ```
+
+
+
 The distribution of film run times is approximately normal, with most movies lasting between 80 and 120 minutes. The mean run time is 104.8 minutes (median = 102 minutes, SD = 16.8), indicating that typical Pixar films cluster closely around a roughly 100‑minute length. The minimum run time is 81 minutes, while two substantially longer films extend the range up to 155 minutes. These long outliers create a mild right skew in an otherwise symmetric distribution.
 
 ### 2.5 run_time vs Rotten Tomatoes, Metacritic, Critics Choice
@@ -265,6 +281,9 @@ cor.test(df$run_time, df$metacritic)
 cor.test(df$run_time, df$critics_choice)
 
 ```
+
+
+
 Correlation analyses were conducted to examine the association between film run time and three measures of critical response (Rotten Tomatoes, Metacritic, Critics’ Choice). Across all three comparisons, results indicated no statistically significant relationship. Run time showed a weak, negative, and non-significant correlation with Rotten Tomatoes scores (r = –0.22, p = .315), Metacritic scores (r = –0.13, p = .564), and Critics’ Choice ratings (r = –0.13, p = .577). The confidence intervals for all estimates included zero, suggesting that film length is not meaningfully associated with critical evaluations. These findings also align with the scatterplots, which show no clear linear trend.
 
 ### 2.6 Frequency of film ratings (film_rating)
@@ -301,6 +320,9 @@ wilcox.test(run_time ~ film_rating, data = clean_films)
 
 
 ```
+
+
+
 After filtering the dataset to include only the meaningful MPAA categories (“G” and “PG”), I examined whether film rating is associated with differences in runtime. A Wilcoxon rank-sum test showed no statistically significant difference between the two groups (W = 64, p = 0.975). This indicates that Pixar’s G‑rated and PG‑rated movies do not differ in their typical runtimes. In practice, this suggests that film length is unrelated to the assigned age rating, and Pixar maintains similar durations across both categories.
 
 
@@ -330,6 +352,9 @@ pixar_films %>%
     y = "Length (minutes)"
   )
 ```
+
+
+
 
 A simple linear regression was performed to examine whether Pixar film runtimes have changed across release years. The model shows a significant positive relationship between release year and runtime (β = 1.078, p = 0.0098). This means that, on average, Pixar movies have become about 1.1 minutes longer each year.
 
@@ -367,6 +392,9 @@ pixar_films %>%
     y = "Number of pieces"
   )
 ```
+
+
+
 The plot shows how movie ratings have changed over time across the Pixar dataset. Early releases are almost exclusively rated G, but from the late 2000s onward PG-rated films appear more frequently, and they gradually become the dominant category. A few films in the 2020s have missing or “Not Rated” labels, but these represent isolated cases rather than a trend.
 
 To quantify this visually observable shift, I fitted a logistic regression predicting the probability of a movie being PG based on its release year. The model shows a significant positive effect of release year (p = 0.0246), meaning that movies released later are statistically more likely to receive a PG rating.
@@ -392,6 +420,10 @@ public_response %>%
     y = "RT score"
   )
 ```
+
+
+
+
 The scatterplot shows Rotten Tomatoes scores across release years, together with a fitted linear trend. The distribution of points suggests no strong upward or downward pattern in critical reception over time.
 
 The linear regression model confirms this visually observed result. The slope of the regression line is small and negative (β = –0.40), but not statistically significant (p = 0.33). The model explains almost none of the variance in the scores (adjusted R² ≈ 0). This indicates that release year is not a meaningful predictor of Rotten Tomatoes ratings in this dataset.
