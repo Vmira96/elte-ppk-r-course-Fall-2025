@@ -183,7 +183,7 @@ ggplot(public_response, aes(rotten_tomatoes, metacritic)) +
   labs(title = "Relation Between Rotten Tomatoes and Metacritic Scores")
 ```
 
-### 2.3 Pearson-korreláció és szignifikanciateszt
+### 2.3 Pearson correlation and significance test
 ```{r}
 cor_test_result <- cor.test(
   public_response$rotten_tomatoes,
@@ -200,6 +200,35 @@ A scatterplot was used to explore the association between Rotten Tomatoes scores
 To quantify this relationship, a Pearson product–moment correlation was calculated. The results revealed a strong, positive, and statistically significant correlation between Rotten Tomatoes and Metacritic scores (r = 0.80, t(21) = 6.17, p < 0.001). The 95% confidence interval [0.58, 0.91] further supports the conclusion that the association is reliably above zero.
 
 Overall, the analysis suggests that the two critic-based rating platforms provide largely consistent evaluations of film quality.
+
+
+### 2.4 Distribution of run_time
+```{r}
+ggplot(pixar_films, aes(x = run_time)) +
+  geom_histogram(fill = "#0073C2FF", color = "white", bins = 10) +
+  labs(title = "Distribution of Film Runtime",
+       x = "Runtime (minutes)", y = "Count")
+
+```
+
+
+### 2.5 Basic descriptive statistics for the length of the film
+```{r}
+summary_stats <- pixar_films %>% 
+  summarise(
+    mean_run_time = mean(run_time, na.rm = TRUE),
+    median_run_time = median(run_time, na.rm = TRUE),
+    sd_run_time = sd(run_time, na.rm = TRUE),
+    min_run_time = min(run_time, na.rm = TRUE),
+    max_run_time = max(run_time, na.rm = TRUE)
+  )
+
+summary_stats
+
+```
+The distribution of film run times is approximately normal, with most movies lasting between 80 and 120 minutes. The mean run time is 104.8 minutes (median = 102 minutes, SD = 16.8), indicating that typical Pixar films cluster closely around a roughly 100‑minute length. The minimum run time is 81 minutes, while two substantially longer films extend the range up to 155 minutes. These long outliers create a mild right skew in an otherwise symmetric distribution.
+
+
 
 
 ## 3. Modellek építése
