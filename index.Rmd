@@ -374,6 +374,13 @@ To quantify this visually observable shift, I fitted a logistic regression predi
 ### 2.10 Trends in critical reviews over time
 
 ```{r}
+public_response2 <- public_response %>%
+  left_join(pixar_films, by = "film") %>%
+  mutate(release_year = as.numeric(format(release_date, "%Y")))
+
+rt_model <- lm(rotten_tomatoes ~ release_year, data = public_response2)
+summary(rt_model)
+
 public_response %>%
   left_join(pixar_films, by = "film") %>%
   ggplot(aes(x = release_date, y = rotten_tomatoes)) +
@@ -385,6 +392,12 @@ public_response %>%
     y = "RT score"
   )
 ```
+The scatterplot shows Rotten Tomatoes scores across release years, together with a fitted linear trend. The distribution of points suggests no strong upward or downward pattern in critical reception over time.
+
+The linear regression model confirms this visually observed result. The slope of the regression line is small and negative (β = –0.40), but not statistically significant (p = 0.33). The model explains almost none of the variance in the scores (adjusted R² ≈ 0). This indicates that release year is not a meaningful predictor of Rotten Tomatoes ratings in this dataset.
+
+Overall, the analysis suggests that Pixar films have maintained relatively stable critical reception over time, without a clear long-term improvement or decline.
+
 
 
 ## 3. Modellek építése
