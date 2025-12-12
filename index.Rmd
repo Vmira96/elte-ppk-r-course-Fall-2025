@@ -266,7 +266,41 @@ cor.test(df$run_time, df$critics_choice)
 ```
 Correlation analyses were conducted to examine the association between film run time and three measures of critical response (Rotten Tomatoes, Metacritic, Critics’ Choice). Across all three comparisons, results indicated no statistically significant relationship. Run time showed a weak, negative, and non-significant correlation with Rotten Tomatoes scores (r = –0.22, p = .315), Metacritic scores (r = –0.13, p = .564), and Critics’ Choice ratings (r = –0.13, p = .577). The confidence intervals for all estimates included zero, suggesting that film length is not meaningfully associated with critical evaluations. These findings also align with the scatterplots, which show no clear linear trend.
 
+### 2.6 Frequency of film ratings (film_rating)
 
+```{r}
+clean_films <- pixar_films %>%
+  filter(film_rating %in% c("G", "PG"))
+unique(clean_films$film_rating)
+
+```
+
+
+
+```{r}
+  ggplot(pixar_clean, aes(x = film_rating)) +
+  geom_bar(fill = "#E69F00") +
+  labs(title = "Distribution of Film Ratings",
+       x = "Rating",
+       y = "Count")
+
+```
+
+
+### 2.7 Frequency of film ratings and its association with running time
+```{r}
+#frequency table
+table(pixar_clean$film_rating)
+
+#relative frequency
+prop.table(table(pixar_clean$film_rating))
+
+#Are the running times different between G and PG movies?
+wilcox.test(run_time ~ film_rating, data = clean_films)
+
+
+```
+After filtering the dataset to include only the meaningful MPAA categories (“G” and “PG”), I examined whether film rating is associated with differences in runtime. A Wilcoxon rank-sum test showed no statistically significant difference between the two groups (W = 64, p = 0.975). This indicates that Pixar’s G‑rated and PG‑rated movies do not differ in their typical runtimes. In practice, this suggests that film length is unrelated to the assigned age rating, and Pixar maintains similar durations across both categories.
 
 
 ## 3. Modellek építése
