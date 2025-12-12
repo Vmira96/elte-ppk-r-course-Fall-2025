@@ -4,7 +4,8 @@ author: "Vikár Míra"
 output:
   html_document:
     df_print: paged
-output_file: "index.html"
+    self_contained: false
+knit: rmarkdown::render
 ---
 
 In this project, I examine data from Pixar films.  
@@ -278,7 +279,7 @@ unique(clean_films$film_rating)
 
 
 ```{r}
-  ggplot(pixar_clean, aes(x = film_rating)) +
+  ggplot(clean_films, aes(x = film_rating)) +
   geom_bar(fill = "#E69F00") +
   labs(title = "Distribution of Film Ratings",
        x = "Rating",
@@ -290,10 +291,10 @@ unique(clean_films$film_rating)
 ### 2.7 Frequency of film ratings and its association with running time
 ```{r}
 #frequency table
-table(pixar_clean$film_rating)
+table(clean_films$film_rating)
 
 #relative frequency
-prop.table(table(pixar_clean$film_rating))
+prop.table(table(clean_films$film_rating))
 
 #Are the running times different between G and PG movies?
 wilcox.test(run_time ~ film_rating, data = clean_films)

@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Vikár Míra" />
+
+
+<title>TidyTuesday 2025-03-11 - Pixar films</title>
+
+<script src="index_files/header-attrs-2.30/header-attrs.js"></script>
+<script src="index_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="index_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="index_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="index_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="index_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="index_files/navigation-1.1/tabsets.js"></script>
+<link href="index_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="index_files/highlightjs-9.12.0/highlight.js"></script>
+<link href="index_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="index_files/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">TidyTuesday 2025-03-11 - Pixar films</h1>
+<h4 class="author">Vikár Míra</h4>
+
+</div>
+
+
+<p>In this project, I examine data from Pixar films.<br />
+My goal is to explore data patterns (EDA) and then build, compare, and
+evaluate at least two models.<br />
+The data analysis is fully reproducible, and all code is available in
+Rmd.</p>
+<div id="load-packages" class="section level1">
+<h1>Load packages</h1>
+<pre class="r"><code># Importing the Pixar dataset directly from GitHub
+
+pixar_films &lt;- readr::read_csv(
+  &quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-03-11/pixar_films.csv&quot;
+)
+
+public_response &lt;- readr::read_csv(
+  &quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-03-11/public_response.csv&quot;
+)</code></pre>
+</div>
+<div id="pixar-dataset-head-and-glimpse" class="section level1">
+<h1>Pixar dataset head and glimpse</h1>
+<pre class="r"><code>head(pixar_films)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["number"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["film"],"name":[2],"type":["chr"],"align":["left"]},{"label":["release_date"],"name":[3],"type":["date"],"align":["right"]},{"label":["run_time"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["film_rating"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"Toy Story","3":"1995-11-22","4":"81","5":"G"},{"1":"2","2":"A Bug's Life","3":"1998-11-25","4":"95","5":"G"},{"1":"3","2":"Toy Story 2","3":"1999-11-24","4":"92","5":"G"},{"1":"4","2":"Monsters, Inc.","3":"2001-11-02","4":"92","5":"G"},{"1":"5","2":"Finding Nemo","3":"2003-05-30","4":"100","5":"G"},{"1":"6","2":"The Incredibles","3":"2004-11-05","4":"115","5":"PG"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>head(public_response)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["film"],"name":[1],"type":["chr"],"align":["left"]},{"label":["rotten_tomatoes"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["metacritic"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["cinema_score"],"name":[4],"type":["chr"],"align":["left"]},{"label":["critics_choice"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"Toy Story","2":"100","3":"95","4":"A","5":"NA"},{"1":"A Bug's Life","2":"92","3":"77","4":"A","5":"NA"},{"1":"Toy Story 2","2":"100","3":"88","4":"A+","5":"100"},{"1":"Monsters, Inc.","2":"96","3":"79","4":"A+","5":"92"},{"1":"Finding Nemo","2":"99","3":"90","4":"A+","5":"97"},{"1":"The Incredibles","2":"97","3":"90","4":"A+","5":"88"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>knitr::kable(head(pixar_films))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">number</th>
+<th align="left">film</th>
+<th align="left">release_date</th>
+<th align="right">run_time</th>
+<th align="left">film_rating</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">Toy Story</td>
+<td align="left">1995-11-22</td>
+<td align="right">81</td>
+<td align="left">G</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">A Bug’s Life</td>
+<td align="left">1998-11-25</td>
+<td align="right">95</td>
+<td align="left">G</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">Toy Story 2</td>
+<td align="left">1999-11-24</td>
+<td align="right">92</td>
+<td align="left">G</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">Monsters, Inc.</td>
+<td align="left">2001-11-02</td>
+<td align="right">92</td>
+<td align="left">G</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">Finding Nemo</td>
+<td align="left">2003-05-30</td>
+<td align="right">100</td>
+<td align="left">G</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">The Incredibles</td>
+<td align="left">2004-11-05</td>
+<td align="right">115</td>
+<td align="left">PG</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>knitr::kable(head(public_response))</code></pre>
+<table>
+<colgroup>
+<col width="22%" />
+<col width="22%" />
+<col width="15%" />
+<col width="18%" />
+<col width="21%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">film</th>
+<th align="right">rotten_tomatoes</th>
+<th align="right">metacritic</th>
+<th align="left">cinema_score</th>
+<th align="right">critics_choice</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Toy Story</td>
+<td align="right">100</td>
+<td align="right">95</td>
+<td align="left">A</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">A Bug’s Life</td>
+<td align="right">92</td>
+<td align="right">77</td>
+<td align="left">A</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">Toy Story 2</td>
+<td align="right">100</td>
+<td align="right">88</td>
+<td align="left">A+</td>
+<td align="right">100</td>
+</tr>
+<tr class="even">
+<td align="left">Monsters, Inc.</td>
+<td align="right">96</td>
+<td align="right">79</td>
+<td align="left">A+</td>
+<td align="right">92</td>
+</tr>
+<tr class="odd">
+<td align="left">Finding Nemo</td>
+<td align="right">99</td>
+<td align="right">90</td>
+<td align="left">A+</td>
+<td align="right">97</td>
+</tr>
+<tr class="even">
+<td align="left">The Incredibles</td>
+<td align="right">97</td>
+<td align="right">90</td>
+<td align="left">A+</td>
+<td align="right">88</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>glimpse(pixar_films)</code></pre>
+<pre><code>## Rows: 27
+## Columns: 5
+## $ number       &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17…
+## $ film         &lt;chr&gt; &quot;Toy Story&quot;, &quot;A Bug&#39;s Life&quot;, &quot;Toy Story 2&quot;, &quot;Monsters, In…
+## $ release_date &lt;date&gt; 1995-11-22, 1998-11-25, 1999-11-24, 2001-11-02, 2003-05-…
+## $ run_time     &lt;dbl&gt; 81, 95, 92, 92, 100, 115, 117, 111, 98, 96, 103, 106, 93,…
+## $ film_rating  &lt;chr&gt; &quot;G&quot;, &quot;G&quot;, &quot;G&quot;, &quot;G&quot;, &quot;G&quot;, &quot;PG&quot;, &quot;G&quot;, &quot;G&quot;, &quot;G&quot;, &quot;PG&quot;, &quot;G&quot;, …</code></pre>
+<pre class="r"><code>glimpse(public_response)</code></pre>
+<pre><code>## Rows: 24
+## Columns: 5
+## $ film            &lt;chr&gt; &quot;Toy Story&quot;, &quot;A Bug&#39;s Life&quot;, &quot;Toy Story 2&quot;, &quot;Monsters,…
+## $ rotten_tomatoes &lt;dbl&gt; 100, 92, 100, 96, 99, 97, 74, 96, 95, 98, 98, 40, 78, …
+## $ metacritic      &lt;dbl&gt; 95, 77, 88, 79, 90, 90, 73, 96, 95, 88, 92, 57, 69, 65…
+## $ cinema_score    &lt;chr&gt; &quot;A&quot;, &quot;A&quot;, &quot;A+&quot;, &quot;A+&quot;, &quot;A+&quot;, &quot;A+&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A+&quot;,…
+## $ critics_choice  &lt;dbl&gt; NA, NA, 100, 92, 97, 88, 89, 91, 90, 95, 97, 67, 81, 7…</code></pre>
+<div id="data-cleaning" class="section level2">
+<h2>1. Data cleaning</h2>
+<p>#Examining variable types and missing data</p>
+<pre class="r"><code>glimpse(pixar_films)</code></pre>
+<pre><code>## Rows: 27
+## Columns: 5
+## $ number       &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17…
+## $ film         &lt;chr&gt; &quot;Toy Story&quot;, &quot;A Bug&#39;s Life&quot;, &quot;Toy Story 2&quot;, &quot;Monsters, In…
+## $ release_date &lt;date&gt; 1995-11-22, 1998-11-25, 1999-11-24, 2001-11-02, 2003-05-…
+## $ run_time     &lt;dbl&gt; 81, 95, 92, 92, 100, 115, 117, 111, 98, 96, 103, 106, 93,…
+## $ film_rating  &lt;chr&gt; &quot;G&quot;, &quot;G&quot;, &quot;G&quot;, &quot;G&quot;, &quot;G&quot;, &quot;PG&quot;, &quot;G&quot;, &quot;G&quot;, &quot;G&quot;, &quot;PG&quot;, &quot;G&quot;, …</code></pre>
+<pre class="r"><code>summary(pixar_films)</code></pre>
+<pre><code>##      number         film            release_date           run_time    
+##  Min.   : 1.0   Length:27          Min.   :1995-11-22   Min.   : 81.0  
+##  1st Qu.: 7.5   Class :character   1st Qu.:2006-12-18   1st Qu.: 95.0  
+##  Median :14.0   Mode  :character   Median :2013-06-21   Median :100.0  
+##  Mean   :14.0                      Mean   :2012-06-15   Mean   :104.8  
+##  3rd Qu.:20.5                      3rd Qu.:2018-12-17   3rd Qu.:106.0  
+##  Max.   :27.0                      Max.   :2023-06-16   Max.   :155.0  
+##                                                         NA&#39;s   :2      
+##  film_rating       
+##  Length:27         
+##  Class :character  
+##  Mode  :character  
+##                    
+##                    
+##                    
+## </code></pre>
+<pre class="r"><code>glimpse(public_response)</code></pre>
+<pre><code>## Rows: 24
+## Columns: 5
+## $ film            &lt;chr&gt; &quot;Toy Story&quot;, &quot;A Bug&#39;s Life&quot;, &quot;Toy Story 2&quot;, &quot;Monsters,…
+## $ rotten_tomatoes &lt;dbl&gt; 100, 92, 100, 96, 99, 97, 74, 96, 95, 98, 98, 40, 78, …
+## $ metacritic      &lt;dbl&gt; 95, 77, 88, 79, 90, 90, 73, 96, 95, 88, 92, 57, 69, 65…
+## $ cinema_score    &lt;chr&gt; &quot;A&quot;, &quot;A&quot;, &quot;A+&quot;, &quot;A+&quot;, &quot;A+&quot;, &quot;A+&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A+&quot;,…
+## $ critics_choice  &lt;dbl&gt; NA, NA, 100, 92, 97, 88, 89, 91, 90, 95, 97, 67, 81, 7…</code></pre>
+<pre class="r"><code>summary(public_response)</code></pre>
+<pre><code>##      film           rotten_tomatoes    metacritic    cinema_score      
+##  Length:24          Min.   : 40.00   Min.   :57.00   Length:24         
+##  Class :character   1st Qu.: 84.00   1st Qu.:71.00   Class :character  
+##  Mode  :character   Median : 96.00   Median :81.00   Mode  :character  
+##                     Mean   : 89.17   Mean   :79.96                     
+##                     3rd Qu.: 97.50   3rd Qu.:90.00                     
+##                     Max.   :100.00   Max.   :96.00                     
+##                     NA&#39;s   :1        NA&#39;s   :1                         
+##  critics_choice  
+##  Min.   : 66.00  
+##  1st Qu.: 81.00  
+##  Median : 89.00  
+##  Mean   : 87.14  
+##  3rd Qu.: 93.00  
+##  Max.   :100.00  
+##  NA&#39;s   :3</code></pre>
+</div>
+</div>
+<div id="exemination-of-missing-values" class="section level1">
+<h1>Exemination of missing values</h1>
+<pre class="r"><code>public_response %&gt;%
+  filter(is.na(critics_choice) | is.na(rotten_tomatoes))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["film"],"name":[1],"type":["chr"],"align":["left"]},{"label":["rotten_tomatoes"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["metacritic"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["cinema_score"],"name":[4],"type":["chr"],"align":["left"]},{"label":["critics_choice"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"Toy Story","2":"100","3":"95","4":"A","5":"NA"},{"1":"A Bug's Life","2":"92","3":"77","4":"A","5":"NA"},{"1":"Luca","2":"NA","3":"NA","4":"NA","5":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Data Overview and Initial Cleaning Steps Before starting the
+analysis, I examined the dataset to understand its structure and
+identify potential data quality issues. The dataset contains 24 Pixar
+films and includes the following variables:</p>
+<p>film (character) – The title of the movie.</p>
+<p>rotten_tomatoes (numeric) – Percentage score from Rotten
+Tomatoes.</p>
+<p>metacritic (numeric) – Metacritic critic score (0–100).</p>
+<p>cinema_score (character) – Audience grade (A, A+, etc.).</p>
+<p>critics_choice (numeric) – Critics’ Choice rating (0–100).</p>
+<p>Summary of Key Findings A first look using glimpse() and summary()
+revealed the following:</p>
+<p>All variables were loaded correctly with the expected data types.</p>
+<p>cinema_score is stored as a character variable, not numeric, because
+it contains letter-based grades (e.g., A, A+).</p>
+<p>Some variables include missing values (NA):</p>
+<p>critics_choice: 3 missing values</p>
+<p>metacritic: 1 missing value</p>
+<p>cinema_score: 1 missing value</p>
+<p>I also inspected rows containing missing data. These came exclusively
+from the film “Luca” and two early films where Critics Choice ratings
+were not available.</p>
+<p>Next Step: Data Cleaning Plan Since the dataset is small and missing
+values are minimal, carefully handling NAs is important.</p>
+</div>
+<div id="handling-missing-data" class="section level1">
+<h1>Handling Missing Data</h1>
+<p>Before proceeding with the exploratory data analysis (EDA), it is
+essential to examine the dataset for missing values. Missing data can
+influence summary statistics, distort visualisations, and potentially
+introduce bias during model building. Therefore, identifying and
+addressing these values is a necessary first step.</p>
+<p>Treatment Strategy Because the missingness is low in proportion and
+the affected variables serve different analytical purposes, we apply the
+following approach:</p>
+<p>cinema_score: We convert this variable into an ordered factor with
+levels A- &lt; A &lt; A+. The single missing value is left as NA, as
+imputing an ordered rating would introduce artificial information.</p>
+</div>
+<div id="convert-cinema_score-to-an-ordered-factor"
+class="section level1">
+<h1>Convert cinema_score to an ordered factor</h1>
+<pre class="r"><code>public_response &lt;- public_response %&gt;%
+  mutate(
+    cinema_score = factor(
+      cinema_score,
+      levels = c(&quot;A-&quot;, &quot;A&quot;, &quot;A+&quot;),   
+      ordered = TRUE
+    )
+  )</code></pre>
+<p>critics_choice: Since this is a numerical rating derived from awards
+evaluation, imputing a synthetic score would not be justified. These
+values are therefore retained as NA and will be handled appropriately
+during later modelling (e.g., filtering out incomplete rows or using
+models that support missingness).</p>
+<p>Verification After these transformations, we confirm that the missing
+values remain only in the intended variables:</p>
+<p>#Checking the type of variable</p>
+<pre class="r"><code>str(public_response$cinema_score)</code></pre>
+<pre><code>##  Ord.factor w/ 3 levels &quot;A-&quot;&lt;&quot;A&quot;&lt;&quot;A+&quot;: 2 2 3 3 3 3 2 2 2 3 ...</code></pre>
+<p>#Checking values and sequences</p>
+<pre class="r"><code>levels(public_response$cinema_score)</code></pre>
+<pre><code>## [1] &quot;A-&quot; &quot;A&quot;  &quot;A+&quot;</code></pre>
+</div>
+<div id="check-missing-values-again" class="section level1">
+<h1>Check missing values again</h1>
+<pre class="r"><code>public_response %&gt;% summarise(across(everything(), ~ sum(is.na(.))))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["film"],"name":[1],"type":["int"],"align":["right"]},{"label":["rotten_tomatoes"],"name":[2],"type":["int"],"align":["right"]},{"label":["metacritic"],"name":[3],"type":["int"],"align":["right"]},{"label":["cinema_score"],"name":[4],"type":["int"],"align":["right"]},{"label":["critics_choice"],"name":[5],"type":["int"],"align":["right"]}],"data":[{"1":"0","2":"1","3":"1","4":"2","5":"3"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>This ensures that the dataset is clean, consistent, and properly
+structured for the next steps in the analysis.</p>
+<div id="exploratory-data-analysis-eda" class="section level2">
+<h2>2. Exploratory Data Analysis (EDA)</h2>
+<ul>
+<li>legalább <strong>két ember számára érthető, jól feliratozott
+plot</strong></li>
+<li>rövid értelmezés a grafikák alatt</li>
+<li>táblázatok és statisztikák</li>
+</ul>
+<p>###2.1 Examination of Rotten Tomatoes distribution</p>
+<pre class="r"><code>public_response %&gt;%
+  ggplot(aes(x = rotten_tomatoes)) +
+  geom_histogram(binwidth = 5, fill = &quot;#69b3a2&quot;) +
+  labs(title = &quot;Distribution of Rotten Tomatoes Scores&quot;,
+       x = &quot;Rotten Tomatoes&quot;,
+       y = &quot;Count&quot;)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+Exploratory Data Analysis – Rotten Tomatoes Distribution (Rewritten) The
+distribution of Rotten Tomatoes scores shows a clear right skew,
+indicating that most films receive relatively high ratings while lower
+scores are less common. Visual inspection suggests three noticeable
+clusters:</p>
+<p>a small group around 40 points,</p>
+<p>a medium‑sized cluster between 68 and 82 points, and</p>
+<p>a prominent concentration between 87 and 100 points.</p>
+<p>These clusters imply that the rating system, which ranges from 0 to
+100, tends to group films into distinct quality tiers, with the majority
+achieving comparatively strong critical evaluations.</p>
+<div id="rotten-tomatoes-vs-metacritic-scatterplot"
+class="section level3">
+<h3>2.2 Rotten Tomatoes vs Metacritic scatterplot</h3>
+<p>Goal: to show how closely critics’ scores correlate.</p>
+<pre class="r"><code>ggplot(public_response, aes(rotten_tomatoes, metacritic)) +
+  geom_point(color = &quot;#1f78b4&quot;, size = 3) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;red&quot;) +
+  labs(title = &quot;Relation Between Rotten Tomatoes and Metacritic Scores&quot;)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="pearson-correlation-and-significance-test"
+class="section level3">
+<h3>2.3 Pearson correlation and significance test</h3>
+<pre class="r"><code>cor_test_result &lt;- cor.test(
+  public_response$rotten_tomatoes,
+  public_response$metacritic,
+  method = &quot;pearson&quot;
+)
+
+cor_test_result</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  public_response$rotten_tomatoes and public_response$metacritic
+## t = 6.1679, df = 21, p-value = 4.048e-06
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.5835946 0.9128600
+## sample estimates:
+##       cor 
+## 0.8027001</code></pre>
+<p>Correlation Between Rotten Tomatoes and Metacritic Scores A
+scatterplot was used to explore the association between Rotten Tomatoes
+scores and Metacritic ratings. Visual inspection suggested a clear
+positive relationship: films with lower Rotten Tomatoes scores (around
+40–70) tend to receive relatively modest Metacritic ratings, while films
+scoring above 90 on Rotten Tomatoes cluster between roughly 76 and 92 on
+Metacritic. This pattern indicates increasing agreement between the two
+rating systems as film quality rises.</p>
+<p>To quantify this relationship, a Pearson product–moment correlation
+was calculated. The results revealed a strong, positive, and
+statistically significant correlation between Rotten Tomatoes and
+Metacritic scores (r = 0.80, t(21) = 6.17, p &lt; 0.001). The 95%
+confidence interval [0.58, 0.91] further supports the conclusion that
+the association is reliably above zero.</p>
+<p>Overall, the analysis suggests that the two critic-based rating
+platforms provide largely consistent evaluations of film quality.</p>
+</div>
+<div id="distribution-of-run_time" class="section level3">
+<h3>2.4 Distribution of run_time</h3>
+<pre class="r"><code>ggplot(pixar_films, aes(x = run_time)) +
+  geom_histogram(fill = &quot;#0073C2FF&quot;, color = &quot;white&quot;, bins = 10) +
+  labs(title = &quot;Distribution of Film Runtime&quot;,
+       x = &quot;Runtime (minutes)&quot;, y = &quot;Count&quot;)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="basic-descriptive-statistics-for-the-length-of-the-film"
+class="section level3">
+<h3>2.5 Basic descriptive statistics for the length of the film</h3>
+<pre class="r"><code>summary_stats &lt;- pixar_films %&gt;% 
+  summarise(
+    mean_run_time = mean(run_time, na.rm = TRUE),
+    median_run_time = median(run_time, na.rm = TRUE),
+    sd_run_time = sd(run_time, na.rm = TRUE),
+    min_run_time = min(run_time, na.rm = TRUE),
+    max_run_time = max(run_time, na.rm = TRUE)
+  )
+
+summary_stats</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["mean_run_time"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["median_run_time"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["sd_run_time"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["min_run_time"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["max_run_time"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"104.84","2":"100","3":"16.78213","4":"81","5":"155"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>The distribution of film run times is approximately normal, with most
+movies lasting between 80 and 120 minutes. The mean run time is 104.8
+minutes (median = 102 minutes, SD = 16.8), indicating that typical Pixar
+films cluster closely around a roughly 100‑minute length. The minimum
+run time is 81 minutes, while two substantially longer films extend the
+range up to 155 minutes. These long outliers create a mild right skew in
+an otherwise symmetric distribution.</p>
+</div>
+<div id="run_time-vs-rotten-tomatoes-metacritic-critics-choice"
+class="section level3">
+<h3>2.5 run_time vs Rotten Tomatoes, Metacritic, Critics Choice</h3>
+<pre class="r"><code>library(dplyr)
+library(tidyr)
+
+ratings_long &lt;- public_response %&gt;%
+  pivot_longer(cols = c(rotten_tomatoes, metacritic, critics_choice),
+               names_to = &quot;rating_type&quot;,
+               values_to = &quot;rating&quot;)
+
+ggplot(ratings_long %&gt;% left_join(pixar_films, by = &quot;film&quot;),
+       aes(x = run_time, y = rating)) +
+  geom_point(size = 3) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;black&quot;) +
+  facet_wrap(~ rating_type, scales = &quot;free_y&quot;) +
+  labs(
+    title = &quot;Runtime vs Ratings (Multiple Sources)&quot;,
+    x = &quot;Runtime (minutes)&quot;,
+    y = &quot;Rating&quot;
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div
+id="run_time-vs-rotten-tomatoes-metacritic-critics-choice-correlations"
+class="section level3">
+<h3>2.6 run_time vs Rotten Tomatoes, Metacritic, Critics Choice
+Correlations</h3>
+<pre class="r"><code>df &lt;- left_join(pixar_films, public_response, by = &quot;film&quot;)
+
+cor.test(df$run_time, df$rotten_tomatoes)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  df$run_time and df$rotten_tomatoes
+## t = -1.0295, df = 21, p-value = 0.315
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.5790755  0.2121789
+## sample estimates:
+##        cor 
+## -0.2191941</code></pre>
+<pre class="r"><code>cor.test(df$run_time, df$metacritic)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  df$run_time and df$metacritic
+## t = -0.58647, df = 21, p-value = 0.5638
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.5123361  0.3010104
+## sample estimates:
+##        cor 
+## -0.1269424</code></pre>
+<pre class="r"><code>cor.test(df$run_time, df$critics_choice)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  df$run_time and df$critics_choice
+## t = -0.56724, df = 19, p-value = 0.5772
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.5311437  0.3204953
+## sample estimates:
+##        cor 
+## -0.1290454</code></pre>
+<p>Correlation analyses were conducted to examine the association
+between film run time and three measures of critical response (Rotten
+Tomatoes, Metacritic, Critics’ Choice). Across all three comparisons,
+results indicated no statistically significant relationship. Run time
+showed a weak, negative, and non-significant correlation with Rotten
+Tomatoes scores (r = –0.22, p = .315), Metacritic scores (r = –0.13, p =
+.564), and Critics’ Choice ratings (r = –0.13, p = .577). The confidence
+intervals for all estimates included zero, suggesting that film length
+is not meaningfully associated with critical evaluations. These findings
+also align with the scatterplots, which show no clear linear trend.</p>
+</div>
+<div id="frequency-of-film-ratings-film_rating" class="section level3">
+<h3>2.6 Frequency of film ratings (film_rating)</h3>
+<pre class="r"><code>clean_films &lt;- pixar_films %&gt;%
+  filter(film_rating %in% c(&quot;G&quot;, &quot;PG&quot;))
+unique(clean_films$film_rating)</code></pre>
+<pre><code>## [1] &quot;G&quot;  &quot;PG&quot;</code></pre>
+<pre class="r"><code>  ggplot(clean_films, aes(x = film_rating)) +
+  geom_bar(fill = &quot;#E69F00&quot;) +
+  labs(title = &quot;Distribution of Film Ratings&quot;,
+       x = &quot;Rating&quot;,
+       y = &quot;Count&quot;)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+</div>
+<div
+id="frequency-of-film-ratings-and-its-association-with-running-time"
+class="section level3">
+<h3>2.7 Frequency of film ratings and its association with running
+time</h3>
+<pre class="r"><code>#frequency table
+table(clean_films$film_rating)</code></pre>
+<pre><code>## 
+##  G PG 
+## 13 10</code></pre>
+<pre class="r"><code>#relative frequency
+prop.table(table(clean_films$film_rating))</code></pre>
+<pre><code>## 
+##         G        PG 
+## 0.5652174 0.4347826</code></pre>
+<pre class="r"><code>#Are the running times different between G and PG movies?
+wilcox.test(run_time ~ film_rating, data = clean_films)</code></pre>
+<pre><code>## 
+##  Wilcoxon rank sum test with continuity correction
+## 
+## data:  run_time by film_rating
+## W = 64, p-value = 0.9752
+## alternative hypothesis: true location shift is not equal to 0</code></pre>
+<p>After filtering the dataset to include only the meaningful MPAA
+categories (“G” and “PG”), I examined whether film rating is associated
+with differences in runtime. A Wilcoxon rank-sum test showed no
+statistically significant difference between the two groups (W = 64, p =
+0.975). This indicates that Pixar’s G‑rated and PG‑rated movies do not
+differ in their typical runtimes. In practice, this suggests that film
+length is unrelated to the assigned age rating, and Pixar maintains
+similar durations across both categories.</p>
+</div>
+</div>
+<div id="modellek-építése" class="section level2">
+<h2>3. Modellek építése</h2>
+<ul>
+<li>legalább <strong>két modell</strong> ugyanarra az outcome változóra
+<ul>
+<li>pl. lineáris modell, logisztikus, random forest, stb.</li>
+</ul></li>
+<li>modell-összehasonlítás
+<ul>
+<li>AIC, RMSE, accuracy stb.</li>
+</ul></li>
+<li>rövid konklúzió: melyik jobb és miért?</li>
+</ul>
+</div>
+<div id="modellek-értékelése" class="section level2">
+<h2>4. Modellek értékelése</h2>
+<ul>
+<li><strong>assumption check + residual diagnostics</strong>
+<ul>
+<li>pl. QQ plot, residuals vs fitted plot</li>
+</ul></li>
+<li>értelmezés: mi látszik, rendben vannak-e a feltételek?</li>
+</ul>
+</div>
+<div id="következtetések-report" class="section level2">
+<h2>5. Következtetések / Report</h2>
+<ul>
+<li>összefoglalás emberi nyelven</li>
+<li>mik a tanulságok?</li>
+<li>mit találtál érdekesnek?</li>
+</ul>
+</div>
+<div id="kreatív-rész-ha-szeretnél" class="section level2">
+<h2>6. Kreatív rész (ha szeretnél)</h2>
+<ul>
+<li>extra vizualizációk</li>
+<li>extra kérdések</li>
+<li>saját ötletek</li>
+</ul>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
