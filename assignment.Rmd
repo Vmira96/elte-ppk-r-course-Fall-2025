@@ -160,12 +160,26 @@ public_response %>%
 
 ```
 
+### 2.2 Rotten Tomatoes vs Metacritic scatterplot
+Goal: to show how closely critics' scores correlate.
+
+```{r}
+ggplot(public_response, aes(rotten_tomatoes, metacritic)) +
+  geom_point(color = "#1f78b4", size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Relation Between Rotten Tomatoes and Metacritic Scores")
+```
+
+
 ## 3. Modellek építése
 - legalább **két modell** ugyanarra az outcome változóra
   - pl. lineáris modell, logisztikus, random forest, stb.
 - modell-összehasonlítás
   - AIC, RMSE, accuracy stb.
 - rövid konklúzió: melyik jobb és miért?
+
+
+
 
 ```{r}
 
