@@ -149,8 +149,14 @@ for the next steps in the analysis.
 - rövid értelmezés a grafikák alatt
 - táblázatok és statisztikák
 
+###2.1 Examination of Rotten Tomatoes distribution
 ```{r}
-
+public_response %>%
+  ggplot(aes(x = rotten_tomatoes)) +
+  geom_histogram(binwidth = 5, fill = "#69b3a2") +
+  labs(title = "Distribution of Rotten Tomatoes Scores",
+       x = "Rotten Tomatoes (%)",
+       y = "Count")
 
 ```
 
