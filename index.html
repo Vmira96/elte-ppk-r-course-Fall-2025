@@ -882,7 +882,7 @@ cor_matrix</code></pre>
 <pre><code>## package &#39;ggcorrplot&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\vikar\AppData\Local\Temp\RtmpqQCvBf\downloaded_packages</code></pre>
+##  C:\Users\vikar\AppData\Local\Temp\RtmpuiNZli\downloaded_packages</code></pre>
 <pre class="r"><code>library(ggcorrplot)
 
 merged &lt;- public_response %&gt;%
@@ -1375,6 +1375,94 @@ produces smaller, more tightly distributed residuals, while the linear
 regression model exhibits larger dispersion and more severe outliers,
 indicating weaker overall fit and greater sensitivity to influential
 observations.</p>
+</div>
+<div id="further-model-diagnostics" class="section level2">
+<h2>Further model diagnostics</h2>
+<pre class="r"><code># Cook&#39;s distance (identification of influential points)
+plot(model_lm, which = 4)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
+<pre class="r"><code># VIF Multicollinearity diagnostics
+library(car)
+vif(model_lm)</code></pre>
+<pre><code>##       run_time   release_year     metacritic critics_choice 
+##       1.066822       1.199150       4.200091       4.274108</code></pre>
+<pre class="r"><code>#Breusch–Pagan test – checking for heteroscedasticity
+library(lmtest)
+bptest(model_lm)</code></pre>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  model_lm
+## BP = 8.7, df = 4, p-value = 0.06905</code></pre>
+<pre class="r"><code>#Shapiro–Wilk test / Anderson–Darling – formalization of normal distribution
+shapiro.test(residuals(model_lm))</code></pre>
+<pre><code>## 
+##  Shapiro-Wilk normality test
+## 
+## data:  residuals(model_lm)
+## W = 0.94321, p-value = 0.252</code></pre>
+<pre class="r"><code>#Autocorrelation test (Durbin–Watson)
+dwtest(model_lm)</code></pre>
+<pre><code>## 
+##  Durbin-Watson test
+## 
+## data:  model_lm
+## DW = 2.1115, p-value = 0.4598
+## alternative hypothesis: true autocorrelation is greater than 0</code></pre>
+<pre class="r"><code>#Partial residual / component–plus–residual plots
+crPlots(model_lm)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-32-2.png" width="672" /></p>
+<pre class="r"><code>#Random forest model diagnostics
+plot(model_rf)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-32-3.png" width="672" /></p>
+<p>Overall, the statistical diagnostic tests indicate that the linear
+regression model meets the key regression assumptions reasonably
+well.</p>
+<p>The Breusch–Pagan test provides borderline evidence for
+heteroskedasticity (p = 0.069), suggesting that variance may not be
+perfectly constant, although the violation is not statistically
+significant at the 5% level.</p>
+<p>The Shapiro–Wilk test shows no departure from residual normality (p =
+0.252).</p>
+<p>The Durbin–Watson statistic indicates no autocorrelation in the
+residuals (DW = 2.11, p = 0.46).</p>
+<p>These results support the general adequacy of the linear model,
+although slight heteroskedasticity remains a potential concern and
+justifies the comparison with the random forest model.</p>
+<p>Cook’s Distance Cook’s distance was examined to identify observations
+with a disproportionately large influence on the fitted linear
+regression model. Three observations showed notably elevated Cook’s
+distance values (approximately 0.30, 0.40, and 0.90). While values above
+1.0 are commonly considered clear indicators of problematic leverage,
+observations approaching this threshold may still exert substantial
+influence on coefficient estimates.</p>
+<p>In this case, the point with a Cook’s distance close to 0.90 is of
+particular concern, as it suggests that removing this observation could
+lead to meaningful changes in the estimated regression parameters. The
+other two influential points (≈0.30 and ≈0.40) exert moderate influence
+but remain below typical cutoffs. Taken together, these diagnostics
+reinforce earlier findings from the residual and leverage plots: a small
+number of influential outliers are present, and their effects should be
+considered when interpreting the model.</p>
+<p>Random Forest – Model Diagnostics The additional diagnostic plot for
+the random forest model shows the relationship between predicted values
+and error estimates. The curve starts with a steep vertical drop around
+zero, followed by a gradual upward trend that extends toward an error
+level of approximately 100. Beyond this point, the line stabilizes into
+a near‑horizontal segment. Overall, the curve appears slightly jagged,
+reflecting the inherent variability of bootstrap aggregation.</p>
+<p>This pattern is typical for random forest models:</p>
+<p>the initial steep section indicates high sensitivity to small
+prediction errors near zero,</p>
+<p>the gradual upward drift suggests increasing error variance for
+larger fitted values,</p>
+<p>while the final flattening indicates regions where prediction errors
+stabilize across trees.</p>
+<p>The mild jaggedness is not problematic; it reflects the
+non‑parametric, ensemble‑based nature of the model rather than any
+violation of assumptions. Overall, the plot does not reveal structural
+issues that would undermine the reliability of the random forest
+predictions.</p>
 </div>
 <div id="következtetések-report" class="section level2">
 <h2>5. Következtetések / Report</h2>
