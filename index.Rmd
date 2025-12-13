@@ -886,8 +886,10 @@ Overall, the boxplots reinforce the conclusion that the random forest produces s
 
 
 
+## Further model diagnostics
 
 ```{r}
+
 
 ```
 
