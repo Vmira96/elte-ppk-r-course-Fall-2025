@@ -567,7 +567,7 @@ Overall, the results suggest a weak but detectable relationship between CinemaSc
 
 
 
-## 3. Modellek építése
+## 3. Model building
 
 ### 3.1 Model results in tables
 ```{r}
