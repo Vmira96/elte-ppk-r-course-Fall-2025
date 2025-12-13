@@ -694,33 +694,216 @@ Its superior performance likely comes from its ability to capture non‑linear r
 Therefore, the random forest model is the preferred approach for predicting Rotten Tomatoes scores in this dataset.
 
 
-```{r}
-
-```
-
-
-
-```{r}
-
-```
-
-
-```{r}
-
-```
-
-
-
-
-## 4. Modellek értékelése
+## 4. Eveluation of Models
 - **assumption check + residual diagnostics**
   - pl. QQ plot, residuals vs fitted plot
 - értelmezés: mi látszik, rendben vannak-e a feltételek?
 
 ```{r}
+## 4. Model Evaluation: Assumption Checks & Diagnostics
 
+
+library(dplyr)
+library(ggplot2)
+library(randomForest)
+library(caret)
+library(Metrics)
+
+# --- Prepare data (same as before) ---
+model_data <- public_response %>%
+  left_join(pixar_films, by = "film") %>%
+  select(rotten_tomatoes, run_time, release_year, metacritic, critics_choice) %>%
+  na.omit()
+
+# --- Fit models again (same formula) ---
+model_lm <- lm(rotten_tomatoes ~ run_time + release_year + metacritic + critics_choice,
+               data = model_data)
+
+set.seed(123)
+model_rf <- randomForest(
+  rotten_tomatoes ~ run_time + release_year + metacritic + critics_choice,
+  data = model_data,
+  ntree = 500
+)
+
+
+## 4.1 LINEAR MODEL ASSUMPTION CHECKS
+
+# ---- Residuals vs Fitted ----
+plot(model_lm, which = 1)
+
+# ---- Normal Q-Q plot ----
+plot(model_lm, which = 2)
+
+# ---- Scale-Location plot (homoscedasticity) ----
+plot(model_lm, which = 3)
+
+# ---- Residuals vs Leverage ----
+plot(model_lm, which = 5)
+
+# Additional ggplot version for the report:
+lm_residuals <- data.frame(
+  fitted = fitted(model_lm),
+  residuals = residuals(model_lm)
+)
+
+ggplot(lm_residuals, aes(x = fitted, y = residuals)) +
+  geom_point(color = "steelblue") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  theme_minimal() +
+  labs(
+    title = "Linear Model — Residuals vs Fitted",
+    x = "Fitted values",
+    y = "Residuals"
+  )
+
+
+## 4.2 RANDOM FOREST DIAGNOSTICS
+
+
+# ---- Residuals vs Fitted ----
+rf_residuals <- data.frame(
+  fitted = predict(model_rf, model_data),
+  residuals = model_data$rotten_tomatoes - predict(model_rf, model_data)
+)
+
+ggplot(rf_residuals, aes(x = fitted, y = residuals)) +
+  geom_point(color = "darkgreen") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  theme_minimal() +
+  labs(
+    title = "Random Forest — Residuals vs Fitted",
+    x = "Fitted values",
+    y = "Residuals"
+  )
+
+# ---- Variable importance ----
+varImpPlot(model_rf)
+
+
+## 4.3 MODEL COMPARISON — Residual Distributions
+# Collect residuals
+diagnostics <- data.frame(
+  model = rep(c("Linear Regression", "Random Forest"),
+              each = nrow(model_data)),
+  residuals = c(
+    model_data$rotten_tomatoes - predict(model_lm, model_data),
+    model_data$rotten_tomatoes - predict(model_rf, model_data)
+  )
+)
+
+ggplot(diagnostics, aes(x = model, y = residuals, fill = model)) +
+  geom_boxplot(alpha = 0.7) +
+  scale_fill_manual(values = c("#0072B2", "#009E73")) +
+  theme_minimal() +
+  labs(
+    title = "Comparison of Residual Distributions",
+    x = "",
+    y = "Residuals"
+  )
 
 ```
+
+
+
+
+
+Diagnostic Evaluation of the Linear Regression Model
+To assess the validity of the linear regression model and the extent to which its statistical assumptions are met, four standard diagnostic plots were examined: Residuals vs Fitted, Normal Q–Q, Scale–Location, and Residuals vs Leverage. Together, these plots allow evaluation of linearity, homoscedasticity, normality of residuals, and the influence of individual observations.
+
+1. Residuals vs Fitted
+This plot is used to check linearity and homoscedasticity.
+In the present model, the points show a systematic curvature, including a noticeable downward bend around a fitted value of ~90. This suggests that the model does not fully capture nonlinear patterns in the data.
+The presence of several clear outliers—most prominently one large negative residual near −22 and two additional moderate outliers around fitted values 77 and 88—further indicates misfit.
+Although most observations cluster near the regression line, the pattern and curvature imply that the linearity assumption is violated.
+
+2. Normal Q–Q Plot
+This plot evaluates the normality of residuals.
+Most points fall relatively close to the theoretical line, but the plot displays a mild S‑shape, and the same three outliers deviate strongly from the expected distribution.
+Residual normality is therefore approximately met, but the heavy-tailed deviations introduced by the outliers represent a notable departure from ideal conditions.
+
+3. Scale–Location Plot
+This plot tests homoscedasticity, that is, whether the residual variance is constant across the range of fitted values.
+The smoothed trend line shows several pronounced bends: an initial downward trend around fitted values near 80, followed by an upward shift, another strong downward break near 90, and a final steep rise around 95.
+These patterns indicate that the spread of residuals changes along the fitted range, violating the constant-variance assumption.
+The high-score end also shows a tighter clustering of points, consistent with non-uniform variance.
+
+4. Residuals vs Leverage
+This plot identifies influential points that might disproportionately affect the model estimates.
+Three observations again stand out as clear outliers. The leverage values are generally low to moderate, but the combination of high residuals and non-trivial leverage suggests these points exert meaningful influence.
+The central region of the plot has greater dispersion of residuals, while the rightmost portion contains very few observations, highlighting structural imbalance in the data.
+Overall, the model exhibits influential observations that may distort coefficient estimates and overall model fit.
+
+Summary
+Across all diagnostics, the linear regression model shows multiple assumption violations:
+
+Nonlinearity (curved pattern in residuals vs fitted)
+
+Heteroscedasticity (changing variance)
+
+Influential outliers (consistent across all plots)
+
+While residual normality is only mildly affected, the more serious issues—nonlinearity and heteroscedasticity—suggest that a simple linear model does not adequately represent the underlying relationships in the data.
+These diagnostics support the conclusion that more flexible, nonlinear approaches (such as the random forest model used in the analysis) are better suited to capturing the structure present in the dataset.
+
+Random Forest – Residuals vs Fitted Plot 
+The residuals vs fitted plot for the random forest model shows a strong concentration of points around fitted values close to 100, indicating that the model produces many predictions near the upper end of the Rotten Tomatoes score range. This clustering is typical when the true outcome values themselves are concentrated in a similar range, and it suggests that the model is capturing general patterns consistently for most observations.
+
+A few outliers are visible, appearing as points noticeably distant from the main cluster. These outliers indicate individual films for which the model either substantially under‑ or over‑predicts the Rotten Tomatoes score. While random forest models are generally robust to irregularities and nonlinearities, these cases highlight observations whose characteristics differ from the broader pattern captured by the ensemble.
+
+Importantly, unlike in linear regression diagnostics, the residuals vs fitted plot for random forests does not assess violations of linear model assumptions (e.g., homoscedasticity, linearity), because random forests do not rely on these assumptions. Instead, this plot is mainly used to identify:
+
+potential systematic prediction bias (none strong appears here aside from the cluster at the top range),
+
+heterogeneity in prediction accuracy across the score range,
+
+and outliers where the model struggles.
+
+Overall, the plot indicates that prediction errors remain small for most films, with only a few exceptional points showing large deviations. This is consistent with the strong quantitative performance of the random forest (high R², low RMSE and MAE).
+
+
+Random Forest: Variable Importance
+The random forest model provides a measure of variable importance based on the total decrease in node impurity contributed by each predictor across all trees. In the present analysis, four predictors were evaluated: release_year, run_time, critics_choice, and metacritic. Their relative importance values were as follows:
+
+release_year: ~500
+
+run_time: ~600
+
+critics_choice: ~1200
+
+metacritic: ~1400
+
+These results indicate that metacritic contributed the most to reducing prediction error, followed closely by critics_choice. Both variables play a substantial role in how the model partitions the data and improve predictive accuracy. In contrast, run_time and release_year exhibit noticeably lower importance values, suggesting that they provide less unique information for predicting Rotten Tomatoes scores within this dataset.
+
+Overall, the variable importance plot highlights that critical ratings (Metacritic and Critics’ Choice) are the dominant predictors in the random forest model, while film metadata (runtime and release year) contribute comparatively less to the model's performance.
+
+Boxplot Diagnostics
+The boxplots of the residuals further illustrate key differences in model behavior.
+For the linear regression model, the residuals range approximately from –5 to +5, with the median located slightly above zero (around 0.2). While most residuals fall within a narrow central band, a noticeable outlier appears near –17, indicating a substantial underestimation for at least one observation. This suggests the presence of at least one influential point that the linear model fails to capture adequately.
+
+The random forest model displays a narrower residual range, roughly from 0 to 3, with the median again close to 0.2, implying mild overall bias. Although the residual distribution is more compact—consistent with the model’s stronger predictive accuracy—several outliers remain visible, notably around –18 and –8, showing that the model still struggles with a few extreme cases, albeit far less frequently than the linear model.
+
+Overall, the boxplots reinforce the conclusion that the random forest produces smaller, more tightly distributed residuals, while the linear regression model exhibits larger dispersion and more severe outliers, indicating weaker overall fit and greater sensitivity to influential observations.
+
+
+
+
+```{r}
+
+```
+
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+
 
 ## 5. Következtetések / Report
 - összefoglalás emberi nyelven
