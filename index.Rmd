@@ -5,7 +5,6 @@ output:
   html_document:
     df_print: paged
     self_contained: false
-knit: rmarkdown::render
 ---
 
 In this project, I examine data from Pixar films.  
