@@ -184,39 +184,9 @@ a prominent concentration between 87 and 100 points.
 These clusters imply that the rating system, which ranges from 0 to 100, tends to group films into distinct quality tiers, with the majority achieving comparatively strong critical evaluations.
 
 
-### 2.2 Rotten Tomatoes vs Metacritic scatterplot
-Goal: to show how closely critics' scores correlate.
-
-```{r}
-ggplot(public_response, aes(rotten_tomatoes, metacritic)) +
-  geom_point(color = "#1f78b4", size = 3) +
-  geom_smooth(method = "lm", se = FALSE, color = "red") +
-  labs(title = "Relation Between Rotten Tomatoes and Metacritic Scores")
-```
-
-### 2.3 Pearson correlation and significance test
-```{r}
-cor_test_result <- cor.test(
-  public_response$rotten_tomatoes,
-  public_response$metacritic,
-  method = "pearson"
-)
-
-cor_test_result
-
-```
 
 
-
-Correlation Between Rotten Tomatoes and Metacritic Scores
-A scatterplot was used to explore the association between Rotten Tomatoes scores and Metacritic ratings. Visual inspection suggested a clear positive relationship: films with lower Rotten Tomatoes scores (around 40–70) tend to receive relatively modest Metacritic ratings, while films scoring above 90 on Rotten Tomatoes cluster between roughly 76 and 92 on Metacritic. This pattern indicates increasing agreement between the two rating systems as film quality rises.
-
-To quantify this relationship, a Pearson product–moment correlation was calculated. The results revealed a strong, positive, and statistically significant correlation between Rotten Tomatoes and Metacritic scores (r = 0.80, t(21) = 6.17, p < 0.001). The 95% confidence interval [0.58, 0.91] further supports the conclusion that the association is reliably above zero.
-
-Overall, the analysis suggests that the two critic-based rating platforms provide largely consistent evaluations of film quality.
-
-
-### 2.4 Distribution of run_time
+### 2.2 Distribution of run_time
 ```{r}
 ggplot(pixar_films, aes(x = run_time)) +
   geom_histogram(fill = "#0073C2FF", color = "white", bins = 10) +
@@ -226,7 +196,7 @@ ggplot(pixar_films, aes(x = run_time)) +
 ```
 
 
-### 2.5 Basic descriptive statistics for the length of the film
+### 2.3 Basic descriptive statistics for the length of the film
 ```{r}
 summary_stats <- pixar_films %>% 
   summarise(
@@ -245,7 +215,7 @@ summary_stats
 
 The distribution of film run times is approximately normal, with most movies lasting between 80 and 120 minutes. The mean run time is 104.8 minutes (median = 102 minutes, SD = 16.8), indicating that typical Pixar films cluster closely around a roughly 100‑minute length. The minimum run time is 81 minutes, while two substantially longer films extend the range up to 155 minutes. These long outliers create a mild right skew in an otherwise symmetric distribution.
 
-### 2.5 run_time vs Rotten Tomatoes, Metacritic, Critics Choice
+### 2.4 run_time vs Rotten Tomatoes, Metacritic, Critics Choice
 
 ```{r}
 library(dplyr)
@@ -272,7 +242,7 @@ ggplot(ratings_long %>% left_join(pixar_films, by = "film"),
 ```
 
 
-### 2.6 run_time vs Rotten Tomatoes, Metacritic, Critics Choice Correlations
+### 2.5 run_time vs Rotten Tomatoes, Metacritic, Critics Choice Correlations
 ```{r}
 df <- left_join(pixar_films, public_response, by = "film")
 
@@ -429,6 +399,107 @@ The scatterplot shows Rotten Tomatoes scores across release years, together with
 The linear regression model confirms this visually observed result. The slope of the regression line is small and negative (β = –0.40), but not statistically significant (p = 0.33). The model explains almost none of the variance in the scores (adjusted R² ≈ 0). This indicates that release year is not a meaningful predictor of Rotten Tomatoes ratings in this dataset.
 
 Overall, the analysis suggests that Pixar films have maintained relatively stable critical reception over time, without a clear long-term improvement or decline.
+
+
+### 2.11 Examination of the relationship between assessments and further correlation studies
+
+# Join the two datasets by film name
+```{r}
+library(dplyr)
+library(ggplot2)
+
+
+pixar_joined <- public_response %>%
+  left_join(pixar_films, by = "film")
+
+```
+
+# Rotten Tomatoes vs Metacritic
+```{r}
+ggplot(pixar_joined, aes(x = rotten_tomatoes, y = metacritic)) +
+  geom_point(color = "#E69F00", size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Rotten Tomatoes vs Metacritic",
+       x = "Rotten Tomatoes score",
+       y = "Metacritic score")
+```
+
+
+
+# Rotten Tomatoes vs Critics Choice
+```{r}
+ggplot(pixar_joined, aes(x = rotten_tomatoes, y = critics_choice)) +
+  geom_point(color = "#56B4E9", size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Rotten Tomatoes vs Critics Choice",
+       x = "Rotten Tomatoes score",
+       y = "Critics Choice score")
+```
+
+# Metacritic vs Critics Choice
+```{r}
+ggplot(pixar_joined, aes(x = metacritic, y = critics_choice)) +
+  geom_point(color = "#009E73", size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Metacritic vs Critics Choice",
+       x = "Metacritic score",
+       y = "Critics Choice score")
+```
+
+
+# Calculation of correlations between numerical evaluations
+```{r}
+numeric_scores <- pixar_joined %>%
+  select(rotten_tomatoes, metacritic, critics_choice)
+
+cor_matrix <- cor(numeric_scores, use = "complete.obs")
+
+cor_matrix
+```
+
+
+# Correlation heatmap
+```{r}
+install.packages("ggcorrplot")
+library(ggcorrplot)
+
+merged <- public_response %>%
+  left_join(pixar_films, by = "film")
+
+num_vars <- merged %>%
+  select(run_time, rotten_tomatoes, metacritic, critics_choice)
+
+corr_matrix <- cor(num_vars, use = "pairwise.complete.obs")
+
+ggcorrplot(corr_matrix,
+           lab = TRUE,
+           type = "lower",
+           hc.order = TRUE,
+           colors = c("blue", "white", "red"))
+```
+
+
+
+The correlation matrix shows strong and positive associations between all three critic‑based rating systems.
+
+Rotten Tomatoes and Metacritic: r = 0.80
+
+Rotten Tomatoes and Critics’ Choice: r = 0.85
+
+Metacritic and Critics’ Choice: r = 0.86
+
+These coefficients indicate that films rated highly by one platform tend to receive similarly high scores on the others. The strength of the correlations (all above 0.80) suggests that the different critic aggregators evaluate Pixar films in a highly consistent manner.
+
+The correlations between runtime and the three critics’ rating variables (Rotten Tomatoes, Metacritic, Critics’ Choice) were all weak and negative (r = –0.22, –0.13, –0.13).
+These values indicate a very weak inverse relationship, meaning that longer films tend to receive slightly lower critic scores, but the effect is minimal.
+Given the small magnitude of the correlations, these relationships are not statistically significant.
+Overall, runtime does not appear to meaningfully influence critical reception for Pixar films.
+
+
+
+```{r}
+
+```
 
 
 
