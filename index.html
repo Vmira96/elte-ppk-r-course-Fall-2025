@@ -465,84 +465,17 @@ plot</strong></li>
 <li>rövid értelmezés a grafikák alatt</li>
 <li>táblázatok és statisztikák</li>
 </ul>
-<p>###2.1 Examination of Rotten Tomatoes distribution</p>
-<pre class="r"><code>public_response %&gt;%
-  ggplot(aes(x = rotten_tomatoes)) +
-  geom_histogram(binwidth = 5, fill = &quot;#69b3a2&quot;) +
-  labs(title = &quot;Distribution of Rotten Tomatoes Scores&quot;,
-       x = &quot;Rotten Tomatoes&quot;,
-       y = &quot;Count&quot;)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p>Exploratory Data Analysis – Rotten Tomatoes Distribution (Rewritten)
-The distribution of Rotten Tomatoes scores shows a clear right skew,
-indicating that most films receive relatively high ratings while lower
-scores are less common. Visual inspection suggests three noticeable
-clusters:</p>
-<p>a small group around 40 points,</p>
-<p>a medium‑sized cluster between 68 and 82 points, and</p>
-<p>a prominent concentration between 87 and 100 points.</p>
-<p>These clusters imply that the rating system, which ranges from 0 to
-100, tends to group films into distinct quality tiers, with the majority
-achieving comparatively strong critical evaluations.</p>
-<div id="rotten-tomatoes-vs-metacritic-scatterplot"
-class="section level3">
-<h3>2.2 Rotten Tomatoes vs Metacritic scatterplot</h3>
-<p>Goal: to show how closely critics’ scores correlate.</p>
-<pre class="r"><code>ggplot(public_response, aes(rotten_tomatoes, metacritic)) +
-  geom_point(color = &quot;#1f78b4&quot;, size = 3) +
-  geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;red&quot;) +
-  labs(title = &quot;Relation Between Rotten Tomatoes and Metacritic Scores&quot;)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-</div>
-<div id="pearson-correlation-and-significance-test"
-class="section level3">
-<h3>2.3 Pearson correlation and significance test</h3>
-<pre class="r"><code>cor_test_result &lt;- cor.test(
-  public_response$rotten_tomatoes,
-  public_response$metacritic,
-  method = &quot;pearson&quot;
-)
-
-cor_test_result</code></pre>
-<pre><code>## 
-##  Pearson&#39;s product-moment correlation
-## 
-## data:  public_response$rotten_tomatoes and public_response$metacritic
-## t = 6.1679, df = 21, p-value = 4.048e-06
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  0.5835946 0.9128600
-## sample estimates:
-##       cor 
-## 0.8027001</code></pre>
-<p>Correlation Between Rotten Tomatoes and Metacritic Scores A
-scatterplot was used to explore the association between Rotten Tomatoes
-scores and Metacritic ratings. Visual inspection suggested a clear
-positive relationship: films with lower Rotten Tomatoes scores (around
-40–70) tend to receive relatively modest Metacritic ratings, while films
-scoring above 90 on Rotten Tomatoes cluster between roughly 76 and 92 on
-Metacritic. This pattern indicates increasing agreement between the two
-rating systems as film quality rises.</p>
-<p>To quantify this relationship, a Pearson product–moment correlation
-was calculated. The results revealed a strong, positive, and
-statistically significant correlation between Rotten Tomatoes and
-Metacritic scores (r = 0.80, t(21) = 6.17, p &lt; 0.001). The 95%
-confidence interval [0.58, 0.91] further supports the conclusion that
-the association is reliably above zero.</p>
-<p>Overall, the analysis suggests that the two critic-based rating
-platforms provide largely consistent evaluations of film quality.</p>
-</div>
 <div id="distribution-of-run_time" class="section level3">
-<h3>2.4 Distribution of run_time</h3>
+<h3>2.1 Distribution of run_time</h3>
 <pre class="r"><code>ggplot(pixar_films, aes(x = run_time)) +
   geom_histogram(fill = &quot;#0073C2FF&quot;, color = &quot;white&quot;, bins = 10) +
   labs(title = &quot;Distribution of Film Runtime&quot;,
        x = &quot;Runtime (minutes)&quot;, y = &quot;Count&quot;)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 </div>
 <div id="basic-descriptive-statistics-for-the-length-of-the-film"
 class="section level3">
-<h3>2.5 Basic descriptive statistics for the length of the film</h3>
+<h3>2.2 Basic descriptive statistics for the length of the film</h3>
 <pre class="r"><code>summary_stats &lt;- pixar_films %&gt;% 
   summarise(
     mean_run_time = mean(run_time, na.rm = TRUE),
@@ -568,7 +501,7 @@ an otherwise symmetric distribution.</p>
 </div>
 <div id="run_time-vs-rotten-tomatoes-metacritic-critics-choice"
 class="section level3">
-<h3>2.5 run_time vs Rotten Tomatoes, Metacritic, Critics Choice</h3>
+<h3>2.3 run_time vs Rotten Tomatoes, Metacritic, Critics Choice</h3>
 <pre class="r"><code>library(dplyr)
 library(tidyr)
 
@@ -588,12 +521,12 @@ ggplot(ratings_long %&gt;% left_join(pixar_films, by = &quot;film&quot;),
     y = &quot;Rating&quot;
   ) +
   theme_minimal()</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 </div>
 <div
 id="run_time-vs-rotten-tomatoes-metacritic-critics-choice-correlations"
 class="section level3">
-<h3>2.6 run_time vs Rotten Tomatoes, Metacritic, Critics Choice
+<h3>2.4 run_time vs Rotten Tomatoes, Metacritic, Critics Choice
 Correlations</h3>
 <pre class="r"><code>df &lt;- left_join(pixar_films, public_response, by = &quot;film&quot;)
 
@@ -645,7 +578,7 @@ is not meaningfully associated with critical evaluations. These findings
 also align with the scatterplots, which show no clear linear trend.</p>
 </div>
 <div id="frequency-of-film-ratings-film_rating" class="section level3">
-<h3>2.6 Frequency of film ratings (film_rating)</h3>
+<h3>2.5 Frequency of film ratings (film_rating)</h3>
 <pre class="r"><code>clean_films &lt;- pixar_films %&gt;%
   filter(film_rating %in% c(&quot;G&quot;, &quot;PG&quot;))
 unique(clean_films$film_rating)</code></pre>
@@ -655,12 +588,12 @@ unique(clean_films$film_rating)</code></pre>
   labs(title = &quot;Distribution of Film Ratings&quot;,
        x = &quot;Rating&quot;,
        y = &quot;Count&quot;)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 </div>
 <div
 id="frequency-of-film-ratings-and-its-association-with-running-time"
 class="section level3">
-<h3>2.7 Frequency of film ratings and its association with running
+<h3>2.6 Frequency of film ratings and its association with running
 time</h3>
 <pre class="r"><code>#frequency table
 table(clean_films$film_rating)</code></pre>
@@ -691,7 +624,7 @@ similar durations across both categories.</p>
 </div>
 <div id="changes-in-run-time-film-length-over-time"
 class="section level3">
-<h3>2.8 Changes in run time (film length) over time</h3>
+<h3>2.7 Changes in run time (film length) over time</h3>
 <pre class="r"><code>library(lubridate)
 
 pixar_films &lt;- pixar_films %&gt;%
@@ -718,7 +651,7 @@ summary(model_runtime_year)</code></pre>
 ## Multiple R-squared:  0.2562, Adjusted R-squared:  0.2239 
 ## F-statistic: 7.923 on 1 and 23 DF,  p-value: 0.009829</code></pre>
 <pre class="r"><code>plot(model_runtime_year)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-20-1.png" width="672" /><img src="index_files/figure-html/unnamed-chunk-20-2.png" width="672" /><img src="index_files/figure-html/unnamed-chunk-20-3.png" width="672" /><img src="index_files/figure-html/unnamed-chunk-20-4.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-26-1.png" width="672" /><img src="index_files/figure-html/unnamed-chunk-26-2.png" width="672" /><img src="index_files/figure-html/unnamed-chunk-26-3.png" width="672" /><img src="index_files/figure-html/unnamed-chunk-26-4.png" width="672" /></p>
 <pre class="r"><code>pixar_films %&gt;%
   ggplot(aes(x = release_date, y = run_time)) +
   geom_point(color = &quot;#0072B2&quot;, size = 3) +
@@ -728,7 +661,7 @@ summary(model_runtime_year)</code></pre>
     x = &quot;Date of publication&quot;,
     y = &quot;Length (minutes)&quot;
   )</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-20-5.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-26-5.png" width="672" /></p>
 <p>A simple linear regression was performed to examine whether Pixar
 film runtimes have changed across release years. The model shows a
 significant positive relationship between release year and runtime (β =
@@ -757,7 +690,7 @@ runtime differences.</p>
 <div
 id="how-much-does-time-matter-when-it-comes-to-movie-ratings-g-vs.-pg"
 class="section level3">
-<h3>2.9 How much does time matter when it comes to movie ratings (G
+<h3>2.8 How much does time matter when it comes to movie ratings (G
 vs. PG)?</h3>
 <pre class="r"><code># Add release_year
 clean_films &lt;- clean_films %&gt;%
@@ -799,7 +732,7 @@ summary(rating_model)</code></pre>
     x = &quot;Date of publication&quot;,
     y = &quot;Number of pieces&quot;
   )</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 <p>The plot shows how movie ratings have changed over time across the
 Pixar dataset. Early releases are almost exclusively rated G, but from
 the late 2000s onward PG-rated films appear more frequently, and they
@@ -813,7 +746,7 @@ year (p = 0.0246), meaning that movies released later are statistically
 more likely to receive a PG rating.</p>
 </div>
 <div id="trends-in-critical-reviews-over-time" class="section level3">
-<h3>2.10 Trends in critical reviews over time</h3>
+<h3>2.9 Trends in critical reviews over time</h3>
 <pre class="r"><code>public_response2 &lt;- public_response %&gt;%
   left_join(pixar_films, by = &quot;film&quot;) %&gt;%
   mutate(release_year = as.numeric(format(release_date, &quot;%Y&quot;)))
@@ -847,7 +780,7 @@ summary(rt_model)</code></pre>
     x = &quot;Date of publication&quot;,
     y = &quot;RT score&quot;
   )</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 <p>The scatterplot shows Rotten Tomatoes scores across release years,
 together with a fitted linear trend. The distribution of points suggests
 no strong upward or downward pattern in critical reception over
@@ -862,7 +795,233 @@ this dataset.</p>
 relatively stable critical reception over time, without a clear
 long-term improvement or decline.</p>
 </div>
+<div
+id="examination-of-the-relationship-between-assessments-and-further-correlation-studies"
+class="section level3">
+<h3>2.10 Examination of the relationship between assessments and further
+correlation studies</h3>
 </div>
+</div>
+</div>
+<div id="join-the-two-datasets-by-film-name" class="section level1">
+<h1>Join the two datasets by film name</h1>
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+
+
+pixar_joined &lt;- public_response %&gt;%
+  left_join(pixar_films, by = &quot;film&quot;)</code></pre>
+</div>
+<div id="histogram-for-all-3-numeric-critic-scores"
+class="section level1">
+<h1>Histogram for all 3 numeric critic scores</h1>
+<pre class="r"><code>public_response %&gt;%
+  select(rotten_tomatoes, metacritic, critics_choice) %&gt;%
+  gather(key = &quot;source&quot;, value = &quot;score&quot;) %&gt;%
+  ggplot(aes(x = score)) +
+  geom_histogram(bins = 10, fill = &quot;#E69F00&quot;, color = &quot;black&quot;) +
+  facet_wrap(~ source, scales = &quot;free&quot;) +
+  labs(title = &quot;Distribution of critic scores&quot;,
+       x = &quot;Score&quot;,
+       y = &quot;Count&quot;)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<p>Across all three critic-based rating variables (Rotten Tomatoes,
+Metacritic, Critics’ Choice), the score distributions are right‑skewed,
+indicating that most Pixar films tend to receive high critical
+evaluations.</p>
+<p>Rotten Tomatoes shows the strongest skew: the majority of films score
+above 90 points, while only a few titles fall below 60 points.
+Metacritic scores are also skewed but more moderately, with most films
+positioned between 70 and 90 points. Critics’ Choice ratings follow a
+similar pattern, with almost all films receiving scores above 85 points,
+and only a small number falling into the mid‑range (50–70 points).</p>
+<p>Overall, the distributions suggest that Pixar films consistently
+achieve high critical acclaim, with very few low-rated outliers.</p>
+</div>
+<div id="rotten-tomatoes-vs-metacritic" class="section level1">
+<h1>Rotten Tomatoes vs Metacritic</h1>
+<pre class="r"><code>ggplot(pixar_joined, aes(x = rotten_tomatoes, y = metacritic)) +
+  geom_point(color = &quot;#E69F00&quot;, size = 3) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;red&quot;) +
+  labs(title = &quot;Rotten Tomatoes vs Metacritic&quot;,
+       x = &quot;Rotten Tomatoes score&quot;,
+       y = &quot;Metacritic score&quot;)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+</div>
+<div id="rotten-tomatoes-vs-critics-choice" class="section level1">
+<h1>Rotten Tomatoes vs Critics Choice</h1>
+<pre class="r"><code>ggplot(pixar_joined, aes(x = rotten_tomatoes, y = critics_choice)) +
+  geom_point(color = &quot;#56B4E9&quot;, size = 3) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;red&quot;) +
+  labs(title = &quot;Rotten Tomatoes vs Critics Choice&quot;,
+       x = &quot;Rotten Tomatoes score&quot;,
+       y = &quot;Critics Choice score&quot;)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
+</div>
+<div id="metacritic-vs-critics-choice" class="section level1">
+<h1>Metacritic vs Critics Choice</h1>
+<pre class="r"><code>ggplot(pixar_joined, aes(x = metacritic, y = critics_choice)) +
+  geom_point(color = &quot;#009E73&quot;, size = 3) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;red&quot;) +
+  labs(title = &quot;Metacritic vs Critics Choice&quot;,
+       x = &quot;Metacritic score&quot;,
+       y = &quot;Critics Choice score&quot;)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+</div>
+<div id="calculation-of-correlations-between-numerical-evaluations"
+class="section level1">
+<h1>Calculation of correlations between numerical evaluations</h1>
+<pre class="r"><code>numeric_scores &lt;- pixar_joined %&gt;%
+  select(rotten_tomatoes, metacritic, critics_choice)
+
+cor_matrix &lt;- cor(numeric_scores, use = &quot;complete.obs&quot;)
+
+cor_matrix</code></pre>
+<pre><code>##                 rotten_tomatoes metacritic critics_choice
+## rotten_tomatoes       1.0000000  0.8018090      0.8521907
+## metacritic            0.8018090  1.0000000      0.8645541
+## critics_choice        0.8521907  0.8645541      1.0000000</code></pre>
+</div>
+<div id="correlation-heatmap" class="section level1">
+<h1>Correlation heatmap</h1>
+<pre class="r"><code>install.packages(&quot;ggcorrplot&quot;)</code></pre>
+<pre><code>## package &#39;ggcorrplot&#39; successfully unpacked and MD5 sums checked
+## 
+## The downloaded binary packages are in
+##  C:\Users\vikar\AppData\Local\Temp\Rtmpw1UEEW\downloaded_packages</code></pre>
+<pre class="r"><code>library(ggcorrplot)
+
+merged &lt;- public_response %&gt;%
+  left_join(pixar_films, by = &quot;film&quot;)
+
+num_vars &lt;- merged %&gt;%
+  select(run_time, rotten_tomatoes, metacritic, critics_choice)
+
+corr_matrix &lt;- cor(num_vars, use = &quot;pairwise.complete.obs&quot;)
+
+ggcorrplot(corr_matrix,
+           lab = TRUE,
+           type = &quot;lower&quot;,
+           hc.order = TRUE,
+           colors = c(&quot;blue&quot;, &quot;white&quot;, &quot;red&quot;))</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
+<p>The correlation matrix shows strong and positive associations between
+all three critic‑based rating systems.</p>
+<p>Rotten Tomatoes and Metacritic: r = 0.80</p>
+<p>Rotten Tomatoes and Critics’ Choice: r = 0.85</p>
+<p>Metacritic and Critics’ Choice: r = 0.86</p>
+<p>These coefficients indicate that films rated highly by one platform
+tend to receive similarly high scores on the others. The strength of the
+correlations (all above 0.80) suggests that the different critic
+aggregators evaluate Pixar films in a highly consistent manner.</p>
+<p>The correlations between runtime and the three critics’ rating
+variables (Rotten Tomatoes, Metacritic, Critics’ Choice) were all weak
+and negative (r = –0.22, –0.13, –0.13). These values indicate a very
+weak inverse relationship, meaning that longer films tend to receive
+slightly lower critic scores, but the effect is minimal. Given the small
+magnitude of the correlations, these relationships are not statistically
+significant. Overall, runtime does not appear to meaningfully influence
+critical reception for Pixar films.</p>
+</div>
+<div id="boxplot-by-other-scores" class="section level1">
+<h1>Boxplot by other scores</h1>
+<div id="cinema_score-and-rotten_tomatoes" class="section level2">
+<h2>Cinema_score and rotten_tomatoes</h2>
+<pre class="r"><code>public_response %&gt;%
+  ggplot(aes(x = cinema_score, y = rotten_tomatoes)) +
+  geom_boxplot(fill = &quot;#E69F00&quot;) +
+  labs(title = &quot;Rotten Tomatoes by CinemaScore category&quot;,
+       x = &quot;CinemaScore&quot;,
+       y = &quot;RT score&quot;)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
+<pre class="r"><code>kruskal.test(rotten_tomatoes ~ cinema_score, data = public_response)</code></pre>
+<pre><code>## 
+##  Kruskal-Wallis rank sum test
+## 
+## data:  rotten_tomatoes by cinema_score
+## Kruskal-Wallis chi-squared = 6.2934, df = 2, p-value = 0.04299</code></pre>
+<pre class="r"><code>library(FSA)
+
+dunnTest(x = public_response$rotten_tomatoes,
+         g = as.factor(public_response$cinema_score),
+         method = &quot;bonferroni&quot;)</code></pre>
+<pre><code>##   Comparison         Z    P.unadj      P.adj
+## 1     A - A-  1.282497 0.19966820 0.59900459
+## 2     A - A+ -1.828103 0.06753410 0.20260230
+## 3    A- - A+ -2.283851 0.02238028 0.06714085</code></pre>
+<p>To examine whether Rotten Tomatoes scores differ across audience
+ratings from CinemaScore, we ran a Kruskal–Wallis test. The result was
+significant (χ² = 6.29, df = 2, p = 0.043), indicating that at least one
+CinemaScore category is associated with different critics’ ratings.</p>
+<p>A Dunn post‑hoc test with Holm adjustment revealed that the only
+statistically meaningful difference was between films rated A‑ and A+ (p
+= 0.067 after adjustment, marginally non‑significant but clearly the
+strongest contrast). This suggests that movies receiving the highest
+audience grade (A+) tend to have higher Rotten Tomatoes scores compared
+to those receiving A‑, while the difference between A and the other
+categories was small and not statistically significant.</p>
+<p>Overall, the results indicate that audience grades and professional
+critic scores are partially aligned: the very best audience-rated films
+(A+) also tend to receive higher professional critic scores, whereas
+differences between A and A‑ are less pronounced.</p>
+</div>
+</div>
+<div id="metacritic-vs-cinemascore" class="section level1">
+<h1>Metacritic vs CinemaScore</h1>
+<pre class="r"><code>public_response %&gt;%
+  ggplot(aes(x = cinema_score, y = metacritic, fill = cinema_score)) +
+  geom_boxplot() +
+  labs(title = &quot;Metacritic by CinemaScore&quot;,
+       x = &quot;CinemaScore&quot;, y = &quot;Metacritic score&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+<pre class="r"><code>kruskal.test(metacritic ~ cinema_score, data = public_response)</code></pre>
+<pre><code>## 
+##  Kruskal-Wallis rank sum test
+## 
+## data:  metacritic by cinema_score
+## Kruskal-Wallis chi-squared = 5.0413, df = 2, p-value = 0.08041</code></pre>
+<p>To examine whether Metacritic scores differ across CinemaScore
+categories, a Kruskal–Wallis rank‑sum test was conducted. The test
+result was:</p>
+<p>χ²(2) = 5.04,</p>
+<p>p = 0.080</p>
+<p>Since the p‑value is above the conventional 0.05 significance
+threshold, there is no statistically significant difference in
+Metacritic scores between the CinemaScore groups.</p>
+<p>Although the test statistic suggests a possible trend toward
+differences, the evidence is not strong enough to conclude that audience
+grades (CinemaScore) are associated with systematically higher or lower
+Metacritic ratings in this dataset.</p>
+</div>
+<div id="critics-choice-vs-cinemascore" class="section level1">
+<h1>Critics’ Choice vs CinemaScore</h1>
+<pre class="r"><code>public_response %&gt;%
+  ggplot(aes(x = cinema_score, y = critics_choice, fill = cinema_score)) +
+  geom_boxplot() +
+  labs(title = &quot;Critics&#39; Choice by CinemaScore&quot;,
+       x = &quot;CinemaScore&quot;, y = &quot;Critics&#39; Choice score&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
+<pre class="r"><code>kruskal.test(critics_choice ~ cinema_score, data = public_response)</code></pre>
+<pre><code>## 
+##  Kruskal-Wallis rank sum test
+## 
+## data:  critics_choice by cinema_score
+## Kruskal-Wallis chi-squared = 4.9356, df = 2, p-value = 0.08477</code></pre>
+<p>To examine whether Critics’ Choice scores differ across audience
+ratings (CinemaScore groups), a Kruskal–Wallis test was performed. The
+result was not statistically significant (χ²(2) = 4.94, p = 0.085),
+indicating that there is no strong evidence of differences in Critics’
+Choice ratings between the CinemaScore categories included in the
+analysis. Because the global test was non‑significant, no post‑hoc
+comparisons were conducted. Overall, Critics’ Choice evaluations appear
+relatively consistent across films receiving different audience
+grades.</p>
+<p>Overall, the results suggest a weak but detectable relationship
+between CinemaScore and Rotten Tomatoes evaluations, while Metacritic
+and Critics Choice scores appear largely independent of
+audience‑assigned CinemaScore grades.</p>
 <div id="modellek-építése" class="section level2">
 <h2>3. Modellek építése</h2>
 <ul>
