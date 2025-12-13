@@ -889,10 +889,64 @@ Overall, the boxplots reinforce the conclusion that the random forest produces s
 ## Further model diagnostics
 
 ```{r}
+# Cook's distance (identification of influential points)
+plot(model_lm, which = 4)
 
+# VIF Multicollinearity diagnostics
+library(car)
+vif(model_lm)
+
+#Breusch–Pagan test – checking for heteroscedasticity
+library(lmtest)
+bptest(model_lm)
+
+#Shapiro–Wilk test / Anderson–Darling – formalization of normal distribution
+shapiro.test(residuals(model_lm))
+
+#Autocorrelation test (Durbin–Watson)
+dwtest(model_lm)
+
+#Partial residual / component–plus–residual plots
+crPlots(model_lm)
+
+#Random forest model diagnostics
+plot(model_rf)
 
 ```
 
+
+
+
+
+Overall, the statistical diagnostic tests indicate that the linear regression model meets the key regression assumptions reasonably well.
+
+The Breusch–Pagan test provides borderline evidence for heteroskedasticity (p = 0.069), suggesting that variance may not be perfectly constant, although the violation is not statistically significant at the 5% level.
+
+The Shapiro–Wilk test shows no departure from residual normality (p = 0.252).
+
+The Durbin–Watson statistic indicates no autocorrelation in the residuals (DW = 2.11, p = 0.46).
+
+These results support the general adequacy of the linear model, although slight heteroskedasticity remains a potential concern and justifies the comparison with the random forest model.
+
+Cook’s Distance
+Cook’s distance was examined to identify observations with a disproportionately large influence on the fitted linear regression model. Three observations showed notably elevated Cook’s distance values (approximately 0.30, 0.40, and 0.90). While values above 1.0 are commonly considered clear indicators of problematic leverage, observations approaching this threshold may still exert substantial influence on coefficient estimates.
+
+In this case, the point with a Cook’s distance close to 0.90 is of particular concern, as it suggests that removing this observation could lead to meaningful changes in the estimated regression parameters. The other two influential points (≈0.30 and ≈0.40) exert moderate influence but remain below typical cutoffs. Taken together, these diagnostics reinforce earlier findings from the residual and leverage plots: a small number of influential outliers are present, and their effects should be considered when interpreting the model.
+
+
+Random Forest – Model Diagnostics
+The additional diagnostic plot for the random forest model shows the relationship between predicted values and error estimates.
+The curve starts with a steep vertical drop around zero, followed by a gradual upward trend that extends toward an error level of approximately 100. Beyond this point, the line stabilizes into a near‑horizontal segment. Overall, the curve appears slightly jagged, reflecting the inherent variability of bootstrap aggregation.
+
+This pattern is typical for random forest models:
+
+the initial steep section indicates high sensitivity to small prediction errors near zero,
+
+the gradual upward drift suggests increasing error variance for larger fitted values,
+
+while the final flattening indicates regions where prediction errors stabilize across trees.
+
+The mild jaggedness is not problematic; it reflects the non‑parametric, ensemble‑based nature of the model rather than any violation of assumptions. Overall, the plot does not reveal structural issues that would undermine the reliability of the random forest predictions.
 
 
 ```{r}
