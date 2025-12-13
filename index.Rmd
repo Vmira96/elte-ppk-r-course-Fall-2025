@@ -155,10 +155,6 @@ This ensures that the dataset is clean, consistent, and properly structured
 for the next steps in the analysis.
 
 ## 2. Exploratory Data Analysis (EDA)
-- legalább **két ember számára érthető, jól feliratozott plot**
-- rövid értelmezés a grafikák alatt
-- táblázatok és statisztikák
-
 
 ### 2.1 Distribution of run_time
 ```{r}
@@ -572,15 +568,6 @@ Overall, the results suggest a weak but detectable relationship between CinemaSc
 
 
 
-```{r}
-
-```
-
-
-```{r}
-
-```
-
 ## 3. Modellek építése
 - legalább **két modell** ugyanarra az outcome változóra
   - pl. lineáris modell, logisztikus, random forest, stb.
@@ -589,9 +576,141 @@ Overall, the results suggest a weak but detectable relationship between CinemaSc
 - rövid konklúzió: melyik jobb és miért?
 
 
+
+# Model results in tables
+```{r}
+library(dplyr)
+library(randomForest)
+library(caret)
+library(Metrics)
+
+# ---- 1. Data preparation ----
+model_data <- public_response %>%
+  left_join(pixar_films, by = "film") %>%
+  select(rotten_tomatoes, run_time, release_year, metacritic, critics_choice) %>%
+  na.omit()
+
+# ---- 2. Linear Regression Model ----
+model_lm <- lm(rotten_tomatoes ~ run_time + release_year + metacritic + critics_choice,
+               data = model_data)
+
+pred_lm <- predict(model_lm, model_data)
+
+lm_results <- data.frame(
+  Model = "Linear Regression",
+  RMSE  = rmse(model_data$rotten_tomatoes, pred_lm),
+  MAE   = mae(model_data$rotten_tomatoes, pred_lm),
+  R2    = caret::R2(pred_lm, model_data$rotten_tomatoes),
+  AIC   = AIC(model_lm)
+)
+
+# ---- 3. Random Forest Model ----
+set.seed(123)
+model_rf <- randomForest(
+  rotten_tomatoes ~ run_time + release_year + metacritic + critics_choice,
+  data = model_data,
+  ntree = 500
+)
+
+pred_rf <- predict(model_rf, model_data)
+
+rf_results <- data.frame(
+  Model = "Random Forest",
+  RMSE  = rmse(model_data$rotten_tomatoes, pred_rf),
+  MAE   = mae(model_data$rotten_tomatoes, pred_rf),
+  R2    = caret::R2(pred_rf, model_data$rotten_tomatoes),
+  AIC   = NA       # AIC RF-re nem értelmezhető
+)
+
+# ---- 4. Model Comparison Table ----
+model_comparison <- bind_rows(lm_results, rf_results)
+
+# ---- 5. Output ----
+lm_results
+rf_results
+model_comparison
+```
+
+
+
+Model Specification and Comparison
+To evaluate how well different models predict Rotten Tomatoes scores, two regression approaches were fitted: a linear regression model and a random forest regression model.
+Both models use the same outcome variable and the same set of predictors, allowing a fair comparison.
+
+Outcome Variable
+Rotten Tomatoes score (numeric, 0–100)
+Represents aggregated critic ratings of each Pixar film.
+
+Predictor Variables
+The following explanatory variables were included in both models:
+
+run_time — film length in minutes
+
+release_year — year of film release
+
+metacritic — Metacritic critic score (0–100)
+
+critics_choice — Critics’ Choice score (0–100)
+
+Hypothesis
+We expect that:
+
+Higher critic‑based numerical scores (Metacritic, Critics' Choice) will positively predict Rotten Tomatoes scores.
+
+Release year and runtime may contribute modestly, but with weaker effects.
+
+A non‑linear model (random forest) should outperform the linear model, because relationships among critic scores may not be strictly linear.
+
+1. Linear Regression — Model Performance
+Metric	Value
+RMSE	6.42
+MAE	4.85
+R²	0.798
+AIC	149.68
+The linear model explains about 79–80% of the variance in Rotten Tomatoes scores.
+Prediction accuracy is moderate, and the linear structure may not fully capture complex interactions between critic rating systems.
+
+2. Random Forest — Model Performance
+Metric	Value
+RMSE	5.12
+MAE	2.98
+R²	0.925
+The random forest model shows a substantial improvement:
+
+Error values decrease noticeably
+
+R² exceeds 0.92, indicating a very strong predictive fit
+Its ability to learn non‑linear patterns makes it well‑suited for this task.
+
+3. Model Comparison
+Metric	Linear Regression	Random Forest
+RMSE	6.42	5.12
+MAE	4.85	2.98
+R²	0.798	0.925
+Conclusion
+The random forest model clearly outperforms the linear regression model across all evaluation metrics.
+Its superior performance likely comes from its ability to capture non‑linear relationships and complex interactions among the rating variables.
+
+Therefore, the random forest model is the preferred approach for predicting Rotten Tomatoes scores in this dataset.
+
+
 ```{r}
 
 ```
+
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+
+
 
 ## 4. Modellek értékelése
 - **assumption check + residual diagnostics**
