@@ -42,7 +42,7 @@ glimpse(public_response)
 ```
 
 ## 1. Data cleaning
-#Examining variable types and missing data
+### 1.1 Examining variable types and missing data
 ```{r}
 glimpse(pixar_films)
 summary(pixar_films)
@@ -51,7 +51,7 @@ glimpse(public_response)
 summary(public_response)
 ```
 
-# Exemination of missing values
+### 1.2 Exemination of missing values
 ```{r}
 public_response %>%
   filter(is.na(critics_choice) | is.na(rotten_tomatoes))
@@ -92,7 +92,7 @@ I also inspected rows containing missing data. These came exclusively from the f
 Next Step: Data Cleaning Plan
 Since the dataset is small and missing values are minimal, carefully handling NAs is important. 
 
-# Handling Missing Data
+### 1.3 Handling Missing Data
 
 Before proceeding with the exploratory data analysis (EDA), it is essential to
 examine the dataset for missing values. Missing data can influence summary
@@ -109,7 +109,7 @@ We convert this variable into an ordered factor with levels
 A- < A < A+. The single missing value is left as NA, as imputing an
 ordered rating would introduce artificial information.
 
-# Convert cinema_score to an ordered factor
+### 1.4 Convert cinema_score to an ordered factor
 ```{r}
 public_response <- public_response %>%
   mutate(
@@ -134,16 +134,16 @@ Verification
 After these transformations, we confirm that the missing values remain only in
 the intended variables:
 
-#Checking the type of variable
+### 1.5 Checking the type of variable
 ```{r}
 str(public_response$cinema_score)
 ```
-#Checking values and sequences
+### 1.6 Checking values and sequences
 ```{r}
 levels(public_response$cinema_score)
 ```
 
-# Check missing values again
+### 1.7 Check missing values again
 ```{r}
 public_response %>% summarise(across(everything(), ~ sum(is.na(.))))
 ```  
@@ -372,7 +372,7 @@ Overall, the analysis suggests that Pixar films have maintained relatively stabl
 
 ### 2.10 Examination of the relationship between assessments and further correlation studies
 
-# Join the two datasets by film name
+#### Join the two datasets by film name
 ```{r}
 library(dplyr)
 library(ggplot2)
@@ -385,7 +385,7 @@ pixar_joined <- public_response %>%
 
 
 
-# Histogram for all 3 numeric critic scores
+#### Histogram for all 3 numeric critic scores
 ```{r}
 public_response %>%
   select(rotten_tomatoes, metacritic, critics_choice) %>%
@@ -409,7 +409,7 @@ Overall, the distributions suggest that Pixar films consistently achieve high cr
 
 
 
-# Rotten Tomatoes vs Metacritic
+#### Rotten Tomatoes vs Metacritic
 ```{r}
 ggplot(pixar_joined, aes(x = rotten_tomatoes, y = metacritic)) +
   geom_point(color = "#E69F00", size = 3) +
@@ -421,7 +421,7 @@ ggplot(pixar_joined, aes(x = rotten_tomatoes, y = metacritic)) +
 
 
 
-# Rotten Tomatoes vs Critics Choice
+#### Rotten Tomatoes vs Critics Choice
 ```{r}
 ggplot(pixar_joined, aes(x = rotten_tomatoes, y = critics_choice)) +
   geom_point(color = "#56B4E9", size = 3) +
@@ -431,7 +431,7 @@ ggplot(pixar_joined, aes(x = rotten_tomatoes, y = critics_choice)) +
        y = "Critics Choice score")
 ```
 
-# Metacritic vs Critics Choice
+#### Metacritic vs Critics Choice
 ```{r}
 ggplot(pixar_joined, aes(x = metacritic, y = critics_choice)) +
   geom_point(color = "#009E73", size = 3) +
@@ -442,7 +442,7 @@ ggplot(pixar_joined, aes(x = metacritic, y = critics_choice)) +
 ```
 
 
-# Calculation of correlations between numerical evaluations
+#### Calculation of correlations between numerical evaluations
 ```{r}
 numeric_scores <- pixar_joined %>%
   select(rotten_tomatoes, metacritic, critics_choice)
@@ -453,7 +453,7 @@ cor_matrix
 ```
 
 
-# Correlation heatmap
+#### Correlation heatmap
 ```{r}
 install.packages("ggcorrplot")
 library(ggcorrplot)
@@ -491,8 +491,8 @@ Given the small magnitude of the correlations, these relationships are not stati
 Overall, runtime does not appear to meaningfully influence critical reception for Pixar films.
 
 
-# Boxplot by other scores
-## Cinema_score and rotten_tomatoes
+#### Boxplot by other scores
+##### Cinema_score and rotten_tomatoes
 ```{r}
 public_response %>%
   ggplot(aes(x = cinema_score, y = rotten_tomatoes)) +
@@ -519,7 +519,7 @@ Overall, the results indicate that audience grades and professional critic score
 
 
 
-# Metacritic vs CinemaScore
+##### Metacritic vs CinemaScore
 ```{r}
 public_response %>%
   ggplot(aes(x = cinema_score, y = metacritic, fill = cinema_score)) +
@@ -544,7 +544,7 @@ Since the p‑value is above the conventional 0.05 significance threshold, there
 
 Although the test statistic suggests a possible trend toward differences, the evidence is not strong enough to conclude that audience grades (CinemaScore) are associated with systematically higher or lower Metacritic ratings in this dataset.
 
-# Critics' Choice vs CinemaScore
+##### Critics' Choice vs CinemaScore
 
 ```{r}
 public_response %>%
@@ -568,15 +568,8 @@ Overall, the results suggest a weak but detectable relationship between CinemaSc
 
 
 ## 3. Modellek építése
-- legalább **két modell** ugyanarra az outcome változóra
-  - pl. lineáris modell, logisztikus, random forest, stb.
-- modell-összehasonlítás
-  - AIC, RMSE, accuracy stb.
-- rövid konklúzió: melyik jobb és miért?
 
-
-
-# Model results in tables
+### 3.1 Model results in tables
 ```{r}
 library(dplyr)
 library(randomForest)
@@ -694,9 +687,7 @@ Therefore, the random forest model is the preferred approach for predicting Rott
 
 
 ## 4. Eveluation of Models
-- **assumption check + residual diagnostics**
-  - pl. QQ plot, residuals vs fitted plot
-- értelmezés: mi látszik, rendben vannak-e a feltételek?
+### 4.1 Assumption Checks & Diagnostics
 
 ```{r}
 ## 4. Model Evaluation: Assumption Checks & Diagnostics
@@ -886,7 +877,7 @@ Overall, the boxplots reinforce the conclusion that the random forest produces s
 
 
 
-## Further model diagnostics
+### 4.2 Further model diagnostics
 
 ```{r}
 # Cook's distance (identification of influential points)
@@ -949,33 +940,20 @@ while the final flattening indicates regions where prediction errors stabilize a
 The mild jaggedness is not problematic; it reflects the non‑parametric, ensemble‑based nature of the model rather than any violation of assumptions. Overall, the plot does not reveal structural issues that would undermine the reliability of the random forest predictions.
 
 
-```{r}
+## 5. Conclusions
 
-```
+Overall, the analyses suggest that both the linear regression and the random forest model capture meaningful structure in the data, but they differ substantially in how they handle nonlinearity, outliers, and residual behavior.
+The linear regression model shows generally acceptable statistical assumptions: the Breusch–Pagan test indicates no strong evidence of heteroskedasticity, the Shapiro–Wilk test suggests that residuals do not significantly deviate from normality, and the Durbin–Watson statistic points to the absence of problematic autocorrelation. However, multiple diagnostics consistently highlight three influential outliers, confirmed by Cook’s distance values approaching or exceeding commonly used thresholds. These observations materially affect the fitted trend and contribute to curvature, uneven residual spread, and instability in several diagnostic plots. It is also important to note that the dataset is relatively small, which limits the statistical power of assumption tests and increases the sensitivity of the linear model to influential points. This indicates that while the linear model is interpretable and statistically sound in its core assumptions, its fit is sensitive to influential data points and potential nonlinear patterns.
 
+In contrast, the random forest model shows high predictive stability and strong performance across feature importance metrics. Its residuals cluster tightly around zero with fewer extreme deviations, and error patterns remain relatively consistent across boosted trees. This suggests that random forest is more robust to outliers and captures nonlinear relationships that the linear model cannot represent. The model’s behavior over iterations also indicates that predictive error stabilizes early, supporting the reliability of the final fit.
 
-```{r}
+Taken together, these results highlight several key insights.
+First, outliers matter: a small number of influential observations substantially distort the linear regression model while leaving the tree‑based model comparatively unaffected.
+Second, nonlinearity is present: curvature in multiple diagnostic plots implies that linearity may not fully describe the underlying data-generating process.
+Third, model choice depends on purpose: if interpretability and classical inference are priorities, linear regression remains useful but requires attention to influential observations. If predictive performance and robustness are the primary goals, the random forest model offers a clearer advantage.
 
-```
-
-
-
-## 5. Következtetések / Report
-- összefoglalás emberi nyelven
-- mik a tanulságok?
-- mit találtál érdekesnek?
-
-```{r}
+In summary, the models provide complementary perspectives: the linear regression highlights where traditional assumptions begin to fail, and the random forest demonstrates how flexible, nonlinear methods can overcome those limitations. Both models contribute to understanding the structure of the data, but the tree-based approach appears better suited for prediction and handling irregularities such as outliers and nonlinear effects.
 
 
-```
-
-## 6. Kreatív rész (ha szeretnél)
-- extra vizualizációk
-- extra kérdések
-- saját ötletek
-
-```{r}
 
 
-```
