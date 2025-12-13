@@ -337,7 +337,9 @@ public_response &lt;- readr::read_csv(
 ## $ critics_choice  &lt;dbl&gt; NA, NA, 100, 92, 97, 88, 89, 91, 90, 95, 97, 67, 81, 79, 93, 75, …</code></pre>
 <div id="data-cleaning" class="section level2">
 <h2>1. Data cleaning</h2>
-<p>#Examining variable types and missing data</p>
+<div id="examining-variable-types-and-missing-data"
+class="section level3">
+<h3>1.1 Examining variable types and missing data</h3>
 <pre class="r"><code>glimpse(pixar_films)</code></pre>
 <pre><code>## Rows: 27
 ## Columns: 5
@@ -373,9 +375,8 @@ public_response &lt;- readr::read_csv(
 ##                     Max.   :100.00   Max.   :96.00                      Max.   :100.00  
 ##                     NA&#39;s   :1        NA&#39;s   :1                          NA&#39;s   :3</code></pre>
 </div>
-</div>
-<div id="exemination-of-missing-values" class="section level1">
-<h1>Exemination of missing values</h1>
+<div id="exemination-of-missing-values" class="section level3">
+<h3>1.2 Exemination of missing values</h3>
 <pre class="r"><code>public_response %&gt;%
   filter(is.na(critics_choice) | is.na(rotten_tomatoes))</code></pre>
 <div data-pagedtable="false">
@@ -408,8 +409,8 @@ were not available.</p>
 <p>Next Step: Data Cleaning Plan Since the dataset is small and missing
 values are minimal, carefully handling NAs is important.</p>
 </div>
-<div id="handling-missing-data" class="section level1">
-<h1>Handling Missing Data</h1>
+<div id="handling-missing-data" class="section level3">
+<h3>1.3 Handling Missing Data</h3>
 <p>Before proceeding with the exploratory data analysis (EDA), it is
 essential to examine the dataset for missing values. Missing data can
 influence summary statistics, distort visualisations, and potentially
@@ -423,8 +424,8 @@ levels A- &lt; A &lt; A+. The single missing value is left as NA, as
 imputing an ordered rating would introduce artificial information.</p>
 </div>
 <div id="convert-cinema_score-to-an-ordered-factor"
-class="section level1">
-<h1>Convert cinema_score to an ordered factor</h1>
+class="section level3">
+<h3>1.4 Convert cinema_score to an ordered factor</h3>
 <pre class="r"><code>public_response &lt;- public_response %&gt;%
   mutate(
     cinema_score = factor(
@@ -440,15 +441,19 @@ during later modelling (e.g., filtering out incomplete rows or using
 models that support missingness).</p>
 <p>Verification After these transformations, we confirm that the missing
 values remain only in the intended variables:</p>
-<p>#Checking the type of variable</p>
+</div>
+<div id="checking-the-type-of-variable" class="section level3">
+<h3>1.5 Checking the type of variable</h3>
 <pre class="r"><code>str(public_response$cinema_score)</code></pre>
 <pre><code>##  Ord.factor w/ 3 levels &quot;A-&quot;&lt;&quot;A&quot;&lt;&quot;A+&quot;: 2 2 3 3 3 3 2 2 2 3 ...</code></pre>
-<p>#Checking values and sequences</p>
+</div>
+<div id="checking-values-and-sequences" class="section level3">
+<h3>1.6 Checking values and sequences</h3>
 <pre class="r"><code>levels(public_response$cinema_score)</code></pre>
 <pre><code>## [1] &quot;A-&quot; &quot;A&quot;  &quot;A+&quot;</code></pre>
 </div>
-<div id="check-missing-values-again" class="section level1">
-<h1>Check missing values again</h1>
+<div id="check-missing-values-again" class="section level3">
+<h3>1.7 Check missing values again</h3>
 <pre class="r"><code>public_response %&gt;% summarise(across(everything(), ~ sum(is.na(.))))</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -457,6 +462,8 @@ values remain only in the intended variables:</p>
 </div>
 <p>This ensures that the dataset is clean, consistent, and properly
 structured for the next steps in the analysis.</p>
+</div>
+</div>
 <div id="exploratory-data-analysis-eda" class="section level2">
 <h2>2. Exploratory Data Analysis (EDA)</h2>
 <div id="distribution-of-run_time" class="section level3">
@@ -794,11 +801,8 @@ id="examination-of-the-relationship-between-assessments-and-further-correlation-
 class="section level3">
 <h3>2.10 Examination of the relationship between assessments and further
 correlation studies</h3>
-</div>
-</div>
-</div>
-<div id="join-the-two-datasets-by-film-name" class="section level1">
-<h1>Join the two datasets by film name</h1>
+<div id="join-the-two-datasets-by-film-name" class="section level4">
+<h4>Join the two datasets by film name</h4>
 <pre class="r"><code>library(dplyr)
 library(ggplot2)
 
@@ -807,8 +811,8 @@ pixar_joined &lt;- public_response %&gt;%
   left_join(pixar_films, by = &quot;film&quot;)</code></pre>
 </div>
 <div id="histogram-for-all-3-numeric-critic-scores"
-class="section level1">
-<h1>Histogram for all 3 numeric critic scores</h1>
+class="section level4">
+<h4>Histogram for all 3 numeric critic scores</h4>
 <pre class="r"><code>public_response %&gt;%
   select(rotten_tomatoes, metacritic, critics_choice) %&gt;%
   gather(key = &quot;source&quot;, value = &quot;score&quot;) %&gt;%
@@ -832,8 +836,8 @@ and only a small number falling into the mid‑range (50–70 points).</p>
 <p>Overall, the distributions suggest that Pixar films consistently
 achieve high critical acclaim, with very few low-rated outliers.</p>
 </div>
-<div id="rotten-tomatoes-vs-metacritic" class="section level1">
-<h1>Rotten Tomatoes vs Metacritic</h1>
+<div id="rotten-tomatoes-vs-metacritic" class="section level4">
+<h4>Rotten Tomatoes vs Metacritic</h4>
 <pre class="r"><code>ggplot(pixar_joined, aes(x = rotten_tomatoes, y = metacritic)) +
   geom_point(color = &quot;#E69F00&quot;, size = 3) +
   geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;red&quot;) +
@@ -842,8 +846,8 @@ achieve high critical acclaim, with very few low-rated outliers.</p>
        y = &quot;Metacritic score&quot;)</code></pre>
 <p><img src="index_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 </div>
-<div id="rotten-tomatoes-vs-critics-choice" class="section level1">
-<h1>Rotten Tomatoes vs Critics Choice</h1>
+<div id="rotten-tomatoes-vs-critics-choice" class="section level4">
+<h4>Rotten Tomatoes vs Critics Choice</h4>
 <pre class="r"><code>ggplot(pixar_joined, aes(x = rotten_tomatoes, y = critics_choice)) +
   geom_point(color = &quot;#56B4E9&quot;, size = 3) +
   geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;red&quot;) +
@@ -852,8 +856,8 @@ achieve high critical acclaim, with very few low-rated outliers.</p>
        y = &quot;Critics Choice score&quot;)</code></pre>
 <p><img src="index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 </div>
-<div id="metacritic-vs-critics-choice" class="section level1">
-<h1>Metacritic vs Critics Choice</h1>
+<div id="metacritic-vs-critics-choice" class="section level4">
+<h4>Metacritic vs Critics Choice</h4>
 <pre class="r"><code>ggplot(pixar_joined, aes(x = metacritic, y = critics_choice)) +
   geom_point(color = &quot;#009E73&quot;, size = 3) +
   geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;red&quot;) +
@@ -863,8 +867,8 @@ achieve high critical acclaim, with very few low-rated outliers.</p>
 <p><img src="index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 </div>
 <div id="calculation-of-correlations-between-numerical-evaluations"
-class="section level1">
-<h1>Calculation of correlations between numerical evaluations</h1>
+class="section level4">
+<h4>Calculation of correlations between numerical evaluations</h4>
 <pre class="r"><code>numeric_scores &lt;- pixar_joined %&gt;%
   select(rotten_tomatoes, metacritic, critics_choice)
 
@@ -876,13 +880,13 @@ cor_matrix</code></pre>
 ## metacritic            0.8018090  1.0000000      0.8645541
 ## critics_choice        0.8521907  0.8645541      1.0000000</code></pre>
 </div>
-<div id="correlation-heatmap" class="section level1">
-<h1>Correlation heatmap</h1>
+<div id="correlation-heatmap" class="section level4">
+<h4>Correlation heatmap</h4>
 <pre class="r"><code>install.packages(&quot;ggcorrplot&quot;)</code></pre>
 <pre><code>## package &#39;ggcorrplot&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\vikar\AppData\Local\Temp\RtmpuiNZli\downloaded_packages</code></pre>
+##  C:\Users\vikar\AppData\Local\Temp\RtmpMhE5BK\downloaded_packages</code></pre>
 <pre class="r"><code>library(ggcorrplot)
 
 merged &lt;- public_response %&gt;%
@@ -917,10 +921,10 @@ magnitude of the correlations, these relationships are not statistically
 significant. Overall, runtime does not appear to meaningfully influence
 critical reception for Pixar films.</p>
 </div>
-<div id="boxplot-by-other-scores" class="section level1">
-<h1>Boxplot by other scores</h1>
-<div id="cinema_score-and-rotten_tomatoes" class="section level2">
-<h2>Cinema_score and rotten_tomatoes</h2>
+<div id="boxplot-by-other-scores" class="section level4">
+<h4>Boxplot by other scores</h4>
+<div id="cinema_score-and-rotten_tomatoes" class="section level5">
+<h5>Cinema_score and rotten_tomatoes</h5>
 <pre class="r"><code>public_response %&gt;%
   ggplot(aes(x = cinema_score, y = rotten_tomatoes)) +
   geom_boxplot(fill = &quot;#E69F00&quot;) +
@@ -959,9 +963,8 @@ critic scores are partially aligned: the very best audience-rated films
 (A+) also tend to receive higher professional critic scores, whereas
 differences between A and A‑ are less pronounced.</p>
 </div>
-</div>
-<div id="metacritic-vs-cinemascore" class="section level1">
-<h1>Metacritic vs CinemaScore</h1>
+<div id="metacritic-vs-cinemascore" class="section level5">
+<h5>Metacritic vs CinemaScore</h5>
 <pre class="r"><code>public_response %&gt;%
   ggplot(aes(x = cinema_score, y = metacritic, fill = cinema_score)) +
   geom_boxplot() +
@@ -988,8 +991,8 @@ differences, the evidence is not strong enough to conclude that audience
 grades (CinemaScore) are associated with systematically higher or lower
 Metacritic ratings in this dataset.</p>
 </div>
-<div id="critics-choice-vs-cinemascore" class="section level1">
-<h1>Critics’ Choice vs CinemaScore</h1>
+<div id="critics-choice-vs-cinemascore" class="section level5">
+<h5>Critics’ Choice vs CinemaScore</h5>
 <pre class="r"><code>public_response %&gt;%
   ggplot(aes(x = cinema_score, y = critics_choice, fill = cinema_score)) +
   geom_boxplot() +
@@ -1016,23 +1019,14 @@ grades.</p>
 between CinemaScore and Rotten Tomatoes evaluations, while Metacritic
 and Critics Choice scores appear largely independent of
 audience‑assigned CinemaScore grades.</p>
+</div>
+</div>
+</div>
+</div>
 <div id="modellek-építése" class="section level2">
 <h2>3. Modellek építése</h2>
-<ul>
-<li>legalább <strong>két modell</strong> ugyanarra az outcome változóra
-<ul>
-<li>pl. lineáris modell, logisztikus, random forest, stb.</li>
-</ul></li>
-<li>modell-összehasonlítás
-<ul>
-<li>AIC, RMSE, accuracy stb.</li>
-</ul></li>
-<li>rövid konklúzió: melyik jobb és miért?</li>
-</ul>
-</div>
-</div>
-<div id="model-results-in-tables" class="section level1">
-<h1>Model results in tables</h1>
+<div id="model-results-in-tables" class="section level3">
+<h3>3.1 Model results in tables</h3>
 <pre class="r"><code>library(dplyr)
 library(randomForest)
 library(caret)
@@ -1142,15 +1136,12 @@ rating variables.</li>
 </ol>
 <p>Therefore, the random forest model is the preferred approach for
 predicting Rotten Tomatoes scores in this dataset.</p>
+</div>
+</div>
 <div id="eveluation-of-models" class="section level2">
 <h2>4. Eveluation of Models</h2>
-<ul>
-<li><strong>assumption check + residual diagnostics</strong>
-<ul>
-<li>pl. QQ plot, residuals vs fitted plot</li>
-</ul></li>
-<li>értelmezés: mi látszik, rendben vannak-e a feltételek?</li>
-</ul>
+<div id="assumption-checks-diagnostics" class="section level3">
+<h3>4.1 Assumption Checks &amp; Diagnostics</h3>
 <pre class="r"><code>## 4. Model Evaluation: Assumption Checks &amp; Diagnostics
 
 
@@ -1376,8 +1367,8 @@ regression model exhibits larger dispersion and more severe outliers,
 indicating weaker overall fit and greater sensitivity to influential
 observations.</p>
 </div>
-<div id="further-model-diagnostics" class="section level2">
-<h2>Further model diagnostics</h2>
+<div id="further-model-diagnostics" class="section level3">
+<h3>4.2 Further model diagnostics</h3>
 <pre class="r"><code># Cook&#39;s distance (identification of influential points)
 plot(model_lm, which = 4)</code></pre>
 <p><img src="index_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
@@ -1464,21 +1455,54 @@ violation of assumptions. Overall, the plot does not reveal structural
 issues that would undermine the reliability of the random forest
 predictions.</p>
 </div>
-<div id="következtetések-report" class="section level2">
-<h2>5. Következtetések / Report</h2>
-<ul>
-<li>összefoglalás emberi nyelven</li>
-<li>mik a tanulságok?</li>
-<li>mit találtál érdekesnek?</li>
-</ul>
 </div>
-<div id="kreatív-rész-ha-szeretnél" class="section level2">
-<h2>6. Kreatív rész (ha szeretnél)</h2>
-<ul>
-<li>extra vizualizációk</li>
-<li>extra kérdések</li>
-<li>saját ötletek</li>
-</ul>
+<div id="conclusions" class="section level2">
+<h2>5. Conclusions</h2>
+<p>Overall, the analyses suggest that both the linear regression and the
+random forest model capture meaningful structure in the data, but they
+differ substantially in how they handle nonlinearity, outliers, and
+residual behavior. The linear regression model shows generally
+acceptable statistical assumptions: the Breusch–Pagan test indicates no
+strong evidence of heteroskedasticity, the Shapiro–Wilk test suggests
+that residuals do not significantly deviate from normality, and the
+Durbin–Watson statistic points to the absence of problematic
+autocorrelation. However, multiple diagnostics consistently highlight
+three influential outliers, confirmed by Cook’s distance values
+approaching or exceeding commonly used thresholds. These observations
+materially affect the fitted trend and contribute to curvature, uneven
+residual spread, and instability in several diagnostic plots. It is also
+important to note that the dataset is relatively small, which limits the
+statistical power of assumption tests and increases the sensitivity of
+the linear model to influential points. This indicates that while the
+linear model is interpretable and statistically sound in its core
+assumptions, its fit is sensitive to influential data points and
+potential nonlinear patterns.</p>
+<p>In contrast, the random forest model shows high predictive stability
+and strong performance across feature importance metrics. Its residuals
+cluster tightly around zero with fewer extreme deviations, and error
+patterns remain relatively consistent across boosted trees. This
+suggests that random forest is more robust to outliers and captures
+nonlinear relationships that the linear model cannot represent. The
+model’s behavior over iterations also indicates that predictive error
+stabilizes early, supporting the reliability of the final fit.</p>
+<p>Taken together, these results highlight several key insights. First,
+outliers matter: a small number of influential observations
+substantially distort the linear regression model while leaving the
+tree‑based model comparatively unaffected. Second, nonlinearity is
+present: curvature in multiple diagnostic plots implies that linearity
+may not fully describe the underlying data-generating process. Third,
+model choice depends on purpose: if interpretability and classical
+inference are priorities, linear regression remains useful but requires
+attention to influential observations. If predictive performance and
+robustness are the primary goals, the random forest model offers a
+clearer advantage.</p>
+<p>In summary, the models provide complementary perspectives: the linear
+regression highlights where traditional assumptions begin to fail, and
+the random forest demonstrates how flexible, nonlinear methods can
+overcome those limitations. Both models contribute to understanding the
+structure of the data, but the tree-based approach appears better suited
+for prediction and handling irregularities such as outliers and
+nonlinear effects.</p>
 </div>
 </div>
 
