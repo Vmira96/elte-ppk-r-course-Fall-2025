@@ -159,34 +159,8 @@ for the next steps in the analysis.
 - rövid értelmezés a grafikák alatt
 - táblázatok és statisztikák
 
-###2.1 Examination of Rotten Tomatoes distribution
-```{r}
-public_response %>%
-  ggplot(aes(x = rotten_tomatoes)) +
-  geom_histogram(binwidth = 5, fill = "#69b3a2") +
-  labs(title = "Distribution of Rotten Tomatoes Scores",
-       x = "Rotten Tomatoes",
-       y = "Count")
 
-```
-
-
-
-Exploratory Data Analysis – Rotten Tomatoes Distribution (Rewritten)
-The distribution of Rotten Tomatoes scores shows a clear right skew, indicating that most films receive relatively high ratings while lower scores are less common. Visual inspection suggests three noticeable clusters:
-
-a small group around 40 points,
-
-a medium‑sized cluster between 68 and 82 points, and
-
-a prominent concentration between 87 and 100 points.
-
-These clusters imply that the rating system, which ranges from 0 to 100, tends to group films into distinct quality tiers, with the majority achieving comparatively strong critical evaluations.
-
-
-
-
-### 2.2 Distribution of run_time
+### 2.1 Distribution of run_time
 ```{r}
 ggplot(pixar_films, aes(x = run_time)) +
   geom_histogram(fill = "#0073C2FF", color = "white", bins = 10) +
@@ -196,7 +170,7 @@ ggplot(pixar_films, aes(x = run_time)) +
 ```
 
 
-### 2.3 Basic descriptive statistics for the length of the film
+### 2.2 Basic descriptive statistics for the length of the film
 ```{r}
 summary_stats <- pixar_films %>% 
   summarise(
@@ -215,7 +189,7 @@ summary_stats
 
 The distribution of film run times is approximately normal, with most movies lasting between 80 and 120 minutes. The mean run time is 104.8 minutes (median = 102 minutes, SD = 16.8), indicating that typical Pixar films cluster closely around a roughly 100‑minute length. The minimum run time is 81 minutes, while two substantially longer films extend the range up to 155 minutes. These long outliers create a mild right skew in an otherwise symmetric distribution.
 
-### 2.4 run_time vs Rotten Tomatoes, Metacritic, Critics Choice
+### 2.3 run_time vs Rotten Tomatoes, Metacritic, Critics Choice
 
 ```{r}
 library(dplyr)
@@ -242,7 +216,7 @@ ggplot(ratings_long %>% left_join(pixar_films, by = "film"),
 ```
 
 
-### 2.5 run_time vs Rotten Tomatoes, Metacritic, Critics Choice Correlations
+### 2.4 run_time vs Rotten Tomatoes, Metacritic, Critics Choice Correlations
 ```{r}
 df <- left_join(pixar_films, public_response, by = "film")
 
@@ -256,7 +230,7 @@ cor.test(df$run_time, df$critics_choice)
 
 Correlation analyses were conducted to examine the association between film run time and three measures of critical response (Rotten Tomatoes, Metacritic, Critics’ Choice). Across all three comparisons, results indicated no statistically significant relationship. Run time showed a weak, negative, and non-significant correlation with Rotten Tomatoes scores (r = –0.22, p = .315), Metacritic scores (r = –0.13, p = .564), and Critics’ Choice ratings (r = –0.13, p = .577). The confidence intervals for all estimates included zero, suggesting that film length is not meaningfully associated with critical evaluations. These findings also align with the scatterplots, which show no clear linear trend.
 
-### 2.6 Frequency of film ratings (film_rating)
+### 2.5 Frequency of film ratings (film_rating)
 
 ```{r}
 clean_films <- pixar_films %>%
@@ -277,7 +251,7 @@ unique(clean_films$film_rating)
 ```
 
 
-### 2.7 Frequency of film ratings and its association with running time
+### 2.6 Frequency of film ratings and its association with running time
 ```{r}
 #frequency table
 table(clean_films$film_rating)
@@ -296,7 +270,7 @@ wilcox.test(run_time ~ film_rating, data = clean_films)
 After filtering the dataset to include only the meaningful MPAA categories (“G” and “PG”), I examined whether film rating is associated with differences in runtime. A Wilcoxon rank-sum test showed no statistically significant difference between the two groups (W = 64, p = 0.975). This indicates that Pixar’s G‑rated and PG‑rated movies do not differ in their typical runtimes. In practice, this suggests that film length is unrelated to the assigned age rating, and Pixar maintains similar durations across both categories.
 
 
-### 2.8 Changes in run time (film length) over time
+### 2.7 Changes in run time (film length) over time
 
 ```{r}
 library(lubridate)
@@ -337,7 +311,7 @@ Overall, the results support the conclusion that Pixar movies tend to get longer
 
 
 
-### 2.9 How much does time matter when it comes to movie ratings (G vs. PG)?
+### 2.8 How much does time matter when it comes to movie ratings (G vs. PG)?
 ```{r}
 # Add release_year
 clean_films <- clean_films %>%
@@ -369,7 +343,7 @@ The plot shows how movie ratings have changed over time across the Pixar dataset
 
 To quantify this visually observable shift, I fitted a logistic regression predicting the probability of a movie being PG based on its release year. The model shows a significant positive effect of release year (p = 0.0246), meaning that movies released later are statistically more likely to receive a PG rating.
 
-### 2.10 Trends in critical reviews over time
+### 2.9 Trends in critical reviews over time
 
 ```{r}
 public_response2 <- public_response %>%
@@ -401,7 +375,7 @@ The linear regression model confirms this visually observed result. The slope of
 Overall, the analysis suggests that Pixar films have maintained relatively stable critical reception over time, without a clear long-term improvement or decline.
 
 
-### 2.11 Examination of the relationship between assessments and further correlation studies
+### 2.10 Examination of the relationship between assessments and further correlation studies
 
 # Join the two datasets by film name
 ```{r}
@@ -413,6 +387,32 @@ pixar_joined <- public_response %>%
   left_join(pixar_films, by = "film")
 
 ```
+
+
+
+# Histogram for all 3 numeric critic scores
+```{r}
+public_response %>%
+  select(rotten_tomatoes, metacritic, critics_choice) %>%
+  gather(key = "source", value = "score") %>%
+  ggplot(aes(x = score)) +
+  geom_histogram(bins = 10, fill = "#E69F00", color = "black") +
+  facet_wrap(~ source, scales = "free") +
+  labs(title = "Distribution of critic scores",
+       x = "Score",
+       y = "Count")
+```
+
+
+
+
+Across all three critic-based rating variables (Rotten Tomatoes, Metacritic, Critics’ Choice), the score distributions are right‑skewed, indicating that most Pixar films tend to receive high critical evaluations.
+
+Rotten Tomatoes shows the strongest skew: the majority of films score above 90 points, while only a few titles fall below 60 points. Metacritic scores are also skewed but more moderately, with most films positioned between 70 and 90 points. Critics’ Choice ratings follow a similar pattern, with almost all films receiving scores above 85 points, and only a small number falling into the mid‑range (50–70 points).
+
+Overall, the distributions suggest that Pixar films consistently achieve high critical acclaim, with very few low-rated outliers.
+
+
 
 # Rotten Tomatoes vs Metacritic
 ```{r}
@@ -496,12 +496,90 @@ Given the small magnitude of the correlations, these relationships are not stati
 Overall, runtime does not appear to meaningfully influence critical reception for Pixar films.
 
 
+# Boxplot by other scores
+## Cinema_score and rotten_tomatoes
+```{r}
+public_response %>%
+  ggplot(aes(x = cinema_score, y = rotten_tomatoes)) +
+  geom_boxplot(fill = "#E69F00") +
+  labs(title = "Rotten Tomatoes by CinemaScore category",
+       x = "CinemaScore",
+       y = "RT score")
+kruskal.test(rotten_tomatoes ~ cinema_score, data = public_response)
+
+library(FSA)
+
+dunnTest(x = public_response$rotten_tomatoes,
+         g = as.factor(public_response$cinema_score),
+         method = "bonferroni")
+```
+
+
+
+To examine whether Rotten Tomatoes scores differ across audience ratings from CinemaScore, we ran a Kruskal–Wallis test. The result was significant (χ² = 6.29, df = 2, p = 0.043), indicating that at least one CinemaScore category is associated with different critics’ ratings.
+
+A Dunn post‑hoc test with Holm adjustment revealed that the only statistically meaningful difference was between films rated A‑ and A+ (p = 0.067 after adjustment, marginally non‑significant but clearly the strongest contrast). This suggests that movies receiving the highest audience grade (A+) tend to have higher Rotten Tomatoes scores compared to those receiving A‑, while the difference between A and the other categories was small and not statistically significant.
+
+Overall, the results indicate that audience grades and professional critic scores are partially aligned: the very best audience-rated films (A+) also tend to receive higher professional critic scores, whereas differences between A and A‑ are less pronounced.
+
+
+
+# Metacritic vs CinemaScore
+```{r}
+public_response %>%
+  ggplot(aes(x = cinema_score, y = metacritic, fill = cinema_score)) +
+  geom_boxplot() +
+  labs(title = "Metacritic by CinemaScore",
+       x = "CinemaScore", y = "Metacritic score") +
+  theme_minimal()
+
+kruskal.test(metacritic ~ cinema_score, data = public_response)
+```
+
+
+
+
+To examine whether Metacritic scores differ across CinemaScore categories, a Kruskal–Wallis rank‑sum test was conducted. The test result was:
+
+χ²(2) = 5.04,
+
+p = 0.080
+
+Since the p‑value is above the conventional 0.05 significance threshold, there is no statistically significant difference in Metacritic scores between the CinemaScore groups.
+
+Although the test statistic suggests a possible trend toward differences, the evidence is not strong enough to conclude that audience grades (CinemaScore) are associated with systematically higher or lower Metacritic ratings in this dataset.
+
+# Critics' Choice vs CinemaScore
+
+```{r}
+public_response %>%
+  ggplot(aes(x = cinema_score, y = critics_choice, fill = cinema_score)) +
+  geom_boxplot() +
+  labs(title = "Critics' Choice by CinemaScore",
+       x = "CinemaScore", y = "Critics' Choice score") +
+  theme_minimal()
+
+kruskal.test(critics_choice ~ cinema_score, data = public_response)
+```
+
+
+
+To examine whether Critics’ Choice scores differ across audience ratings (CinemaScore groups), a Kruskal–Wallis test was performed. The result was not statistically significant (χ²(2) = 4.94, p = 0.085), indicating that there is no strong evidence of differences in Critics’ Choice ratings between the CinemaScore categories included in the analysis. Because the global test was non‑significant, no post‑hoc comparisons were conducted. Overall, Critics’ Choice evaluations appear relatively consistent across films receiving different audience grades.
+
+
+Overall, the results suggest a weak but detectable relationship between CinemaScore and Rotten Tomatoes evaluations, while Metacritic and Critics Choice scores appear largely independent of audience‑assigned CinemaScore grades.
+
+
+
 
 ```{r}
 
 ```
 
 
+```{r}
+
+```
 
 ## 3. Modellek építése
 - legalább **két modell** ugyanarra az outcome változóra
